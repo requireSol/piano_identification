@@ -22,7 +22,7 @@ def set_length2(left_measure, right_measure, length):
     compare_lengths_pause[10][0] = '12'
     compare_lengths_pause[12][0] = '14'
     compare_lengths_pause[14][0] = '16'
-    #some commentary
+
     temp_notation = []
     for line in left_measure:
         tones = []
