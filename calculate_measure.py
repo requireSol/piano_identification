@@ -161,10 +161,12 @@ def combination_recursion(condition, values, new_valuelist, toneslist):
             way2 += new_valuelist + [values[- condition] - 1]
             way2 = combination_recursion(condition - 1, values, way2, toneslist)
             evaluation_way2 = measure_evaluation(way2, toneslist)
+
         elif 6 <= values[- condition] <= 16:
             way2 += new_valuelist + [values[- condition] - 2]
             way2 = combination_recursion(condition - 1, values, way2, toneslist)
             evaluation_way2 = measure_evaluation(way2, toneslist)
+
         else:
             evaluation_way2 = 0
 
@@ -172,10 +174,12 @@ def combination_recursion(condition, values, new_valuelist, toneslist):
             way3 += new_valuelist + [values[- condition] + 1]
             way3 = combination_recursion(condition - 1, values, way3, toneslist)
             evaluation_way3 = measure_evaluation(way3, toneslist)
+
         elif 4 <= values[- condition] <= 14:
             way3 += new_valuelist + [values[- condition] + 2]
             way3 = combination_recursion(condition - 1, values, way3, toneslist)
             evaluation_way3 = measure_evaluation(way3, toneslist)
+
         else:
             evaluation_way3 = 0
 
