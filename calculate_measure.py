@@ -2,7 +2,7 @@ import improve_measure as i_m
 
 
 def frame_count_to_percentage(measure, measure_length):
-
+    # YIELD KEYWORD ! funktionsaufruf erzeugt generator object
     compare_lengths_keys = []
     compare_lengths_pause = []
     for i in range(1, 17):
