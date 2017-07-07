@@ -12,7 +12,7 @@ def creating_abc_notation():
         #print(measure)
         temp = d_a.analyze_pressed_keys(measure)
         # LEFT: Index 0, RIGHT: Index 1
-        temp = c_m.set_length2(temp[0], temp[1], len(measure))
+        temp = c_m.create_abc_notation_of_both_hands(temp[0], temp[1], len(measure))
         whole_not_left += temp[0]
         whole_not_right += temp[1]
 

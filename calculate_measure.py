@@ -1,7 +1,8 @@
 import improve_measure as i_m
 
 
-def set_length2(left_measure, right_measure, length):
+def frame_count_to_percentage(measure, measure_length):
+
     compare_lengths_keys = []
     compare_lengths_pause = []
     for i in range(1, 17):
@@ -23,76 +24,55 @@ def set_length2(left_measure, right_measure, length):
     compare_lengths_pause[12][0] = '14'
     compare_lengths_pause[14][0] = '16'
 
-    temp_notation = []
-    for line in left_measure:
-        tones = []
-        valuesoflines = []
-        for tone in line:
-            temp = (float(tone[1]) / float(length))
+    for voice in measure:
+        tones_of_voice = []
+        note_values_of_voice = []
+        for tone in voice:
+            temp = (float(tone[1]) / float(measure_length))
             if tone[0] == 'z':
                 for comp in compare_lengths_pause:
                     if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
+                        note_values_of_voice.append(int(comp[0]))
+                        tones_of_voice.append(tone[0])
                         break
             else:
                 for comp in compare_lengths_keys:
                     if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
+                        note_values_of_voice.append(int(comp[0]))
+                        tones_of_voice.append(tone[0])
                         break
-        # print(3 ** len(valuesoflines))
-        combination = combination_recursion(len(valuesoflines), valuesoflines, [], tones)
-        combination = i_m.merge_pause_and_note(combination, tones)
-        abc_notation = ''
+        yield note_values_of_voice, tones_of_voice
+
+
+def percentage_to_note_value(measure, measure_length):
+
+    abc_notation_all_voices_list = []
+    voices_generator = frame_count_to_percentage(measure, measure_length)
+    for voice in voices_generator:
+        note_values_of_voice = voice[0]
+        tones_of_voice = voice[1]
+        combination = combination_recursion(len(note_values_of_voice), note_values_of_voice, [], tones_of_voice)
+        combination = i_m.merge_pause_and_note(combination, tones_of_voice)
+        abc_notation_one_voice = ''
         for i, combi in enumerate(combination):
-            if not combi == 0 and not (combi == 16 and tones[i] == 'z'):
-                abc_notation += tones[i] + str(combi) + ' '
-        if not abc_notation == '':
-            temp_notation.append(abc_notation)
-    if len(temp_notation) == 0:
-        temp_notation = ['z16 ']
-    left_abc = '& '
-    left_abc = left_abc.join(temp_notation)
-    left_abc += '|\n'
+            if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z'):
+                abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
+        if not abc_notation_one_voice == '':
+            abc_notation_all_voices_list.append(abc_notation_one_voice)
+    if len(abc_notation_all_voices_list) == 0:
+        abc_notation_all_voices_list = ['z16 ']
+    abc_notation_all_voices = '& '
+    abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
+    abc_notation_all_voices += '|\n'
+    return abc_notation_all_voices
 
-    temp_notation = []
-    for line in right_measure:
-        tones = []
-        valuesoflines = []
-        for tone in line:
-            temp = (float(tone[1]) / float(length))
-            if tone[0] == 'z':
-                for comp in compare_lengths_pause:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
 
-            else:
-                for comp in compare_lengths_keys:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
-        # print(3 ** len(valuesoflines))
-        combination = combination_recursion(len(valuesoflines), valuesoflines, [], tones)
-        combination = i_m.merge_pause_and_note(combination, tones)
-        if not (sum(combination)) == 16:
-            print('ERROR', combination, tones)
-        abc_notation = ''
-        for i, combi in enumerate(combination):
-            if not combi == 0 and not (combi == 16 and tones[i] == 'z'):
-                abc_notation += tones[i] + str(combi) + ' '
-        if not abc_notation == '':
-            temp_notation.append(abc_notation)
-    if len(temp_notation) == 0:
-        temp_notation = ['z16 ']
-    right_abc = '& '
-    right_abc = right_abc.join(temp_notation)
-    right_abc += '|\n'
+def create_abc_notation_of_both_hands(left_measure, right_measure, length):
 
-    return left_abc, right_abc
+    left_hand_abc = percentage_to_note_value(left_measure, length)
+    right_hand_abc = percentage_to_note_value(right_measure, length)
+
+    return left_hand_abc, right_hand_abc
 
 
 def measure_evaluation(way, tones):

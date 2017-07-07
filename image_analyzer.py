@@ -23,8 +23,8 @@ def get_data_from_image(image_count):
      [[0 1 0 2 0 0 0 0] [0 1 0 2 0 0 0 0] [0 1 0 2 0 0 0 0] [0 1 0 2 0 0 0 0] [1 0 0 0 2 0 0 0] [1 0 0 0 2 0 0 0] [1 0 0 0 2 0 0 0]]]                   #4. Takt besteht aus 7 Frames
     """
     count = 0
-    taktende_gesetzt = 0 #Wenn ein Taktende erkannt worden ist, wird das hier vermerkt (0 kein Taktende gesetzt, 1 Taktende gesetzt)
-    measure = [] # Hier wird ein Takt zwischengespeichert, bevor er zu den gesamten Daten ergänzt wird
+    taktende_gesetzt = 0  # Wenn ein Taktende erkannt worden ist, wird das hier vermerkt (0 kein Taktende gesetzt, 1 Taktende gesetzt)
+    measure = []  # Hier wird ein Takt zwischengespeichert, bevor er zu den gesamten Daten ergänzt wird
     for i in range(image_count):
         image_asarray = misc.imread('sct2\\sct-' + str(i) + '.png')
         # image_asarray = get_image_asarray('sct2\\sct-' + str(i) + '.png')
