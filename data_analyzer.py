@@ -4,9 +4,6 @@ import numpy as np
 
 def analyze_pressed_keys(data): #Bezieht sich auf einen Takt
     """data is an 2D numpy-array"""
-    # phase 1  SUMMING UP KEYS
-    # print(len(data[0]))
-    # print(data)
 
     gesamt = [] #Hier werden die Anzahlen der auf einanderfolgenden 0,1,2 jeder Taste eines Taktes gespeichert
     for index in range(len(data[0])): #88 Durchläufe für 88 Tasten
