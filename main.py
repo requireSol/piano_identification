@@ -1,19 +1,20 @@
+# -*- coding: utf-8 -*-
 import creating_abc_file as c_n
 import recording as rec
-
+import thread
+import time
 
 c = raw_input('Mode: [1] = recording | [2] = creating abc-notation\n')
 if c == '1':
-    # print('START')
-    # try:
-    #    test = thread.start_new_thread(rec.record, (252,))    # time in seconds
-    # except:
-    #    "Error: unable to start thread"
-    rec.record(324)
+    print('START')
+    rec.prepare()
+    test = thread.start_new_thread(rec.record, (224,))    # time in seconds
+    time.sleep(240)
+
     # c = raw_input("Press any key to stop the recording")
 elif c == '2':
 
-    c_n.creating_abc_notation()
+    c_n.creating_abc_notation()  # TODO über returnwert, hier zurückgeben
 
     """whole_data = i_a.get_data_from_image(12856)  # 15313
     whole_not_left = ''

@@ -1,138 +1,89 @@
-def set_length2(left_measure, right_measure, length):
-
-    compare_lengths_keys = []
-    compare_lengths_pause = []
-    for i in range(1, 17):
-        a = 1.0 / 16.0
-        compare_lengths_keys.append([str(i), round(i * a + 0.00, 4), round((i - 1) * a + 0.00, 4)])
-        compare_lengths_pause.append([str(i), round(i * a + 0.035, 4), round((i - 1) * a + 0.035, 4)])
-
-    compare_lengths_keys[4][0] = '6'
-    compare_lengths_keys[6][0] = '8'
-    compare_lengths_keys[10][0] = '12'
-    compare_lengths_keys[14][0] = '16'
+# -*- coding: utf-8 -*-
+import correct_rhythm as c_r
 
 
-    temp_notation = []
-    for line in left_measure:
-        tones = []
-        valuesoflines = []
-        for tone in line:
-            temp = (float(tone[1]) / float(length))
-            if tone[0] == 'z':
-                for comp in compare_lengths_pause:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
-            else:
-                for comp in compare_lengths_keys:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
+def new_version(measure, measure_length):
+    PAUSE_THRESHOLD = 0.07
+    NOTE_THRESHOLD = 0.01
+    note = ((1, 0.01, 0.07),
+            (2, 0.07, 0.13),
+            (3, 0.13, 0.19),
+            (4, 0.19, 0.26),
+            (6, 0.26, 0.39),
+            (8, 0.39, 0.52),
+            (10, 0.52, 0.64),
+            (12, 0.64, 0.77),
+            (14, 0.77, 0.88),
+            (16, 0.88, 1.00))
 
-        combination = combination_recursion(len(valuesoflines), valuesoflines, [[], 0])
-        abc_notation = ''
-        for i, combi in enumerate(combination[0]):
-            abc_notation += tones[i] + str(combi) + ' '
-        temp_notation.append(abc_notation)
+    pause = ((1, 0.07, 0.012),
+            (2, 0.012, 0.18),
+            (3, 0.18, 0.24),
+            (4, 0.24, 0.31),
+            (6, 0.31, 0.44),
+            (8, 0.44, 0.57),
+            (10, 0.57, 0.69),
+            (12, 0.69, 0.82),
+            (14, 0.82, 0.93),
+            (16, 0.93, 1.00))
 
-    left_abc = '& '
-    left_abc = left_abc.join(temp_notation)
-    left_abc += '|\n'
+    for voice in measure:
+        tones_of_voice = []
+        note_values_of_voice = []
+        # percent_values = []  # Eventuell Prozentwerte auf 100 ernuet hochrechnen
+        for tone in voice:
+            temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
+            if temp > PAUSE_THRESHOLD and tone[0] == 'z':
+                for value, min, max in pause:
+                    if min < temp <= max:
+                        note_values_of_voice.append(value)
+                        tones_of_voice.append(tone[0])
 
-    temp_notation = []
-    for line in right_measure:
-        tones = []
-        valuesoflines = []
-        for tone in line:
+            elif temp > NOTE_THRESHOLD and not tone[0] == 'z':
+                for value, min, max in note:
+                    if min < temp <= max:
+                        note_values_of_voice.append(value)
+                        tones_of_voice.append(tone[0])
+                        # percent_values.append((tone, voice))
 
-            temp = (float(tone[1]) / float(length))
-            if tone[0] == 'z':
-                for comp in compare_lengths_pause:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
+        if sum(note_values_of_voice) == 16:
+            # print('YEAH' + str(note_values_of_voice) + str(tones_of_voice))
+            note_values_of_voice = c_r.improve_valid_rhythm(note_values_of_voice, tones_of_voice)
+            # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
 
-            else:
-                for comp in compare_lengths_keys:
-                    if comp[2] <= temp <= comp[1]:
-                        valuesoflines.append(int(comp[0]))
-                        tones.append(tone[0])
-                        break
-
-        combination = combination_recursion(len(valuesoflines), valuesoflines, [[], 0])
-        if not (sum(combination[0])) == 16:
-            print('ERROR', combination, tones)
-        abc_notation = ''
-        for i, combi in enumerate(combination[0]):
-            abc_notation += tones[i] + str(combi) + ' '
-        temp_notation.append(abc_notation)
-
-    right_abc = '& '
-    right_abc = right_abc.join(temp_notation)
-    right_abc += '|\n'
-
-    return left_abc, right_abc
-
-
-def combination_recursion(condition, values, valuelist):
-    """
-    valuelist: [[lengthes], [priorities]]
-    values: [all lengthes of tones]
-    condition: start with len(values)
-    """
-    way1 = [[], 0]
-    way2 = [[], 0]
-
-    if condition == 1:
-        way1[0] += valuelist[0] + [values[- condition]]
-
-        if values[- condition] == 1:
-            way2[0] += valuelist[0] + [values[- condition]]
         else:
-            way2[0] += valuelist[0] + [values[- condition] - 1]
+            # print('BUHH' + str(note_values_of_voice) + str(tones_of_voice))
+            note_values_of_voice = c_r.correct_invalid_rhythm(note_values_of_voice, tones_of_voice)
+            # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
 
-        way1[1] += valuelist[1] + 3
-        way2[1] += valuelist[1] + 2
+        yield note_values_of_voice, tones_of_voice
 
-        if not (sum(way1[0]) == 16) and not (sum(way2[0]) == 16):
-            return way1
-        elif not sum(way1[0]) == 16:
-            return way2
-        elif not sum(way2[0]) == 16:
-            return way1
-        elif way1[1] == way2[1]:
-            return way1
-        elif way1[1] < way2[1]:
-            return way1
-        else:
-            return way2
 
-    else:
+def abc(measure, measure_length):
+    abc_notation_all_voices_list = []
+    voices_generator = new_version(measure, measure_length)
+    for voice in voices_generator:
+        note_values_of_voice = voice[0]
+        tones_of_voice = voice[1]
 
-        way1[0] += valuelist[0] + [values[- condition]]
-        if values[- condition] == 1:
-            way2[0] += valuelist[0] + [values[- condition]]
-        else:
-            way2[0] += valuelist[0] + [values[- condition] - 1]
-        way1[1] += valuelist[1] + 3
-        way2[1] += valuelist[1] + 2
+        abc_notation_one_voice = ''
+        for i, combi in enumerate(note_values_of_voice):
+            if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z'):
+                abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
+        if not abc_notation_one_voice == '':
+            abc_notation_all_voices_list.append(abc_notation_one_voice)
 
-        way1 = combination_recursion(condition - 1, values, way1)
-        way2 = combination_recursion(condition - 1, values, way2)
+    if len(abc_notation_all_voices_list) == 0:
+        abc_notation_all_voices_list = ['z16 ']
+    abc_notation_all_voices = '& '
+    abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
+    abc_notation_all_voices += '|\n'
+    return abc_notation_all_voices
 
-        if not (sum(way1[0]) == 16) and not (sum(way2[0]) == 16):
-            return way1
-        elif not sum(way1[0]) == 16:
-            return way2
-        elif not sum(way2[0]) == 16:
-            return way1
-        elif way1[1] == way2[1]:
-            return way1
-        elif way1[1] < way2[1]:
-            return way1
-        else:
-            return way2
+
+def abc_both_hands(left_measure, right_measure, length):
+
+    left_hand_abc = abc(left_measure, length)
+    right_hand_abc = abc(right_measure, length)
+
+    return left_hand_abc, right_hand_abc

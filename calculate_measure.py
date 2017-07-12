@@ -1,14 +1,14 @@
+# -*- coding: utf-8 -*-
 import improve_measure as i_m
 
 
-def frame_count_to_percentage(measure, measure_length):
-    # YIELD KEYWORD ! funktionsaufruf erzeugt generator object
+def set_compare_values():
     compare_lengths_keys = []
     compare_lengths_pause = []
     for i in range(1, 17):
         a = 1.0 / 16.0
         compare_lengths_keys.append([str(i), round(i * a - 0.00, 4), round((i - 1) * a - 0.00, 4)])
-        compare_lengths_pause.append([str(i), round(i * a + 0.05, 4), round((i - 1) * a + 0.05, 4)])
+        compare_lengths_pause.append([str(i), round(i * a + 0.035, 4), round((i - 1) * a + 0.035, 4)])
 
     compare_lengths_keys[4][0] = '6'
     compare_lengths_keys[6][0] = '8'
@@ -24,30 +24,50 @@ def frame_count_to_percentage(measure, measure_length):
     compare_lengths_pause[12][0] = '14'
     compare_lengths_pause[14][0] = '16'
 
+    return compare_lengths_keys, compare_lengths_pause
+
+
+def frame_count_to_note_value(measure, measure_length):
+    # YIELD KEYWORD ! funktionsaufruf erzeugt generator object
+
+    compare_values = set_compare_values()
+    compare_lengths_keys = compare_values[0]
+    compare_lengths_pause = compare_values[1]
+
+    log = open('log1.txt', 'a')
+
     for voice in measure:
         tones_of_voice = []
         note_values_of_voice = []
         for tone in voice:
             temp = (float(tone[1]) / float(measure_length))
             if tone[0] == 'z':
+                log.write('z: ' + str(temp) + '\n')
                 for comp in compare_lengths_pause:
                     if comp[2] <= temp <= comp[1]:
+
                         note_values_of_voice.append(int(comp[0]))
                         tones_of_voice.append(tone[0])
                         break
             else:
+                log.write(tone[0] + ': ' + str(temp) + '\n')
                 for comp in compare_lengths_keys:
                     if comp[2] <= temp <= comp[1]:
+
                         note_values_of_voice.append(int(comp[0]))
                         tones_of_voice.append(tone[0])
                         break
+        log.write('---------------------voice-------------\n')
+
         yield note_values_of_voice, tones_of_voice
+    log.write('---------------------measure-------------\n')
+    log.close()
 
 
-def percentage_to_note_value(measure, measure_length):
+def note_value_to_abc_notation(measure, measure_length):
 
     abc_notation_all_voices_list = []
-    voices_generator = frame_count_to_percentage(measure, measure_length)
+    voices_generator = frame_count_to_note_value(measure, measure_length)
     for voice in voices_generator:
         note_values_of_voice = voice[0]
         tones_of_voice = voice[1]
@@ -59,6 +79,7 @@ def percentage_to_note_value(measure, measure_length):
                 abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
             abc_notation_all_voices_list.append(abc_notation_one_voice)
+
     if len(abc_notation_all_voices_list) == 0:
         abc_notation_all_voices_list = ['z16 ']
     abc_notation_all_voices = '& '
@@ -69,21 +90,21 @@ def percentage_to_note_value(measure, measure_length):
 
 def create_abc_notation_of_both_hands(left_measure, right_measure, length):
 
-    left_hand_abc = percentage_to_note_value(left_measure, length)
-    right_hand_abc = percentage_to_note_value(right_measure, length)
+    left_hand_abc = note_value_to_abc_notation(left_measure, length)
+    right_hand_abc = note_value_to_abc_notation(right_measure, length)
 
     return left_hand_abc, right_hand_abc
 
 
 def measure_evaluation(way, tones):
     evaluation = 0
-
+    #TODO Replace with better function
     if sum(way) == 16:
         evaluation += 100
 
     for index, element in enumerate(way):
         if (element == 1 or element == 3) and tones[index] == 'z':
-            evaluation -= 1
+            evaluation -= 5
         if tones[index] == 'z':
             evaluation -= element
         else:
