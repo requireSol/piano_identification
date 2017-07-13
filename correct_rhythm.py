@@ -2,7 +2,7 @@
 
 
 def without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes):
-    if diff_value > 0: # and len(value_3_notes + value_1_notes) > 0:
+    if diff_value > 0:  # and len(value_3_notes + value_1_notes) > 0:
         for index in value_1_notes:
             new_rhythm[index] = 2
         for index in value_3_notes:
@@ -161,10 +161,7 @@ def improve_valid_rhythm(old_rhythm, tones):
                 break
 
         if diff_value > 0:
-            new_rhythm = filling_pauses(diff_value,pauses,new_rhythm,sum_pauses)
+            new_rhythm = filling_pauses(diff_value, pauses, new_rhythm, sum_pauses)
             return new_rhythm
         else:
             return new_rhythm
-
-
-
