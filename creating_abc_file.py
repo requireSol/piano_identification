@@ -4,7 +4,7 @@ import calculate_measure as c_m
 import image_analyzer as i_a
 import os
 
-
+print('master')
 def creating_abc_notation():
     log = open('log1.txt', 'w')
     log.write('')
