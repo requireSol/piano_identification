@@ -3,8 +3,9 @@ import correct_rhythm as c_r
 
 
 def new_version(measure, measure_length):
-    PAUSE_THRESHOLD = 0.07
-    NOTE_THRESHOLD = 0.01
+
+    cons_pause_threshold = 0.07
+    cons_note_threshold = 0.01
     note = ((1, 0.01, 0.07),
             (2, 0.07, 0.13),
             (3, 0.13, 0.19),
@@ -17,15 +18,15 @@ def new_version(measure, measure_length):
             (16, 0.88, 1.00))
 
     pause = ((1, 0.07, 0.012),
-            (2, 0.012, 0.18),
-            (3, 0.18, 0.24),
-            (4, 0.24, 0.31),
-            (6, 0.31, 0.44),
-            (8, 0.44, 0.57),
-            (10, 0.57, 0.69),
-            (12, 0.69, 0.82),
-            (14, 0.82, 0.93),
-            (16, 0.93, 1.00))
+             (2, 0.012, 0.18),
+             (3, 0.18, 0.24),
+             (4, 0.24, 0.31),
+             (6, 0.31, 0.44),
+             (8, 0.44, 0.57),
+             (10, 0.57, 0.69),
+             (12, 0.69, 0.82),
+             (14, 0.82, 0.93),
+             (16, 0.93, 1.00))
     log = open('log1.txt', 'a')
     for voice in measure:
         tones_of_voice = []
@@ -33,17 +34,17 @@ def new_version(measure, measure_length):
         # percent_values = []  # Eventuell Prozentwerte auf 100 ernuet hochrechnen
         for tone in voice:
             temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
-            if temp > PAUSE_THRESHOLD and tone[0] == 'z':
+            if temp > cons_pause_threshold and tone[0] == 'z':
                 log.write('z: ' + str(temp) + '\n')
-                for value, min, max in pause:
-                    if min < temp <= max:
+                for value, min_v, max_v in pause:
+                    if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
 
-            elif temp > NOTE_THRESHOLD and not tone[0] == 'z':
+            elif temp > cons_note_threshold and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
-                for value, min, max in note:
-                    if min < temp <= max:
+                for value, min_v, max_v in note:
+                    if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
                         # percent_values.append((tone, voice))
@@ -88,7 +89,6 @@ def abc(measure, measure_length):
 
 
 def abc_both_hands(left_measure, right_measure, length):
-
     left_hand_abc = abc(left_measure, length)
     right_hand_abc = abc(right_measure, length)
 

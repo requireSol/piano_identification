@@ -14,6 +14,7 @@ def get_data_from_image(image_count):
             black_keys_x.append(z)
     keys = white_keys_x + black_keys_x
 
+    # measure_number_of_ties = []  # Taktnummern, deren erste Noten einen Haltebogen benötigt
     f = open("output.txt", 'w')
     whole_data = [] # Es werden dort alle Takte in einer Liste gespeichert, die jeweils eine Liste über den Status aller Tasten eines Frames enthalten (1 /2 gedrückt, 0 nicht gedrückt
     """Beispiel: Diese(im Beispiel gibt es statt 88 Tasten nur 8, weshalb eine Frameliste die Länge von 8 hat)
@@ -60,10 +61,11 @@ def get_data_from_image(image_count):
                 measure = measure[temp1:] #Der neue Takt enthält bereits die restlichen Frames, die nicht mehr zum vorherigen Takt gehören
             count = 0 #Zähler für mögliche Taktstriche wird zurückgesetzt, da neuer Takt anfängt
             taktende_gesetzt = 0 #Neuer Takt hat angefangen, es muss noch ein Taktende irgendwann gesetzt werden
+            # measure_number_of_ties.append(len(whole_data)-1)
 
         f.write('\n')
 
     whole_data.append(np.asarray(measure)) #Rest nach dem Taktende des vorletzten Takt wird hinzugefügt, auch wenn es kein extra Taktende gibt
 
     f.close()
-    return whole_data
+    return whole_data  #, measure_number_of_ties

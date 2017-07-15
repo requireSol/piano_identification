@@ -3,6 +3,8 @@ import creating_abc_file as c_n
 import recording as rec
 import thread
 import time
+import multiprocessing
+
 
 c = raw_input('Mode: [1] = recording | [2] = creating abc-notation\n')
 if c == '1':
