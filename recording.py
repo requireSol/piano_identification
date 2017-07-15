@@ -15,7 +15,7 @@ def prepare():
 
     for filename in os.listdir(path):
         os.remove(path + filename)
-
+# sdagjkl
 
 def record(time_amount):
 
