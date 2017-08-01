@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 import creating_abc_file as c_n
 import recording as rec
-import thread
 import time
 import multiprocessing
 
 
+path = 'sct2\\'
 c = raw_input('Mode: [1] = recording | [2] = creating abc-notation\n')
 if c == '1':
     print('START')
-    rec.prepare()
-    test = thread.start_new_thread(rec.record, (224,))    # time in seconds
+    rec.prepare(path)
+    rec.record(224, path)    # time in seconds
     time.sleep(240)
 
     # c = raw_input("Press any key to stop the recording")
 elif c == '2':
 
-    c_n.creating_abc_notation()  # TODO über returnwert, hier zurückgeben
+    c_n.creating_abc_notation(path)  # TODO über returnwert, hier zurückgeben
 
     """whole_data = i_a.get_data_from_image(12856)  # 15313
     whole_not_left = ''

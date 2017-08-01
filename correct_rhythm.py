@@ -71,7 +71,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
             pauses.append((index, old_rhythm[index]))
             sum_pauses += old_rhythm[index]
             new_rhythm[index] = 0
-        elif not tone == 'z':  # (Index of a tone (with odd length) | Length of a tone)
+        else:  # (Index of a tone (with odd length) | Length of a tone)
             if old_rhythm[index] == 1:
                 value_1_notes.append(index)
             elif old_rhythm[index] == 3:

@@ -31,7 +31,6 @@ def new_version(measure, measure_length):
     for voice in measure:
         tones_of_voice = []
         note_values_of_voice = []
-        # percent_values = []  # Eventuell Prozentwerte auf 100 ernuet hochrechnen
         for tone in voice:
             temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
             if temp > cons_pause_threshold and tone[0] == 'z':
@@ -47,7 +46,6 @@ def new_version(measure, measure_length):
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
-                        # percent_values.append((tone, voice))
         log.write(str(measure_length) + '---------------------voice-------------\n')
 
         if sum(note_values_of_voice) == 16:
@@ -82,6 +80,11 @@ def abc(measure, measure_length):
 
     if len(abc_notation_all_voices_list) == 0:
         abc_notation_all_voices_list = ['z16 ']
+
+    """for tie in tones_with_ties:
+        if allkeys[tie] in abc_notation_all_voices_list[-1]:
+            abc_notation_all_voices_list[-1] = abc_notation_all_voices_list[-1][:-1] + '- '"""
+
     abc_notation_all_voices = '& '
     abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
     abc_notation_all_voices += '|\n'
