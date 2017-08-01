@@ -3,8 +3,9 @@ import correct_rhythm as c_r
 
 
 def new_version(measure, measure_length):
-    PAUSE_THRESHOLD = 0.07
-    NOTE_THRESHOLD = 0.01
+
+    cons_pause_threshold = 0.07
+    cons_note_threshold = 0.01
     note = ((1, 0.01, 0.07),
             (2, 0.07, 0.13),
             (3, 0.13, 0.19),
@@ -32,14 +33,14 @@ def new_version(measure, measure_length):
         note_values_of_voice = []
         for tone in voice:
             temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
-            if temp > PAUSE_THRESHOLD and tone[0] == 'z':
+            if temp > cons_pause_threshold and tone[0] == 'z':
                 log.write('z: ' + str(temp) + '\n')
                 for value, min_v, max_v in pause:
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
 
-            elif temp > NOTE_THRESHOLD and not tone[0] == 'z':
+            elif temp > cons_note_threshold and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
                 for value, min_v, max_v in note:
                     if min_v < temp <= max_v:
@@ -83,15 +84,14 @@ def abc(measure, measure_length):
     """for tie in tones_with_ties:
         if allkeys[tie] in abc_notation_all_voices_list[-1]:
             abc_notation_all_voices_list[-1] = abc_notation_all_voices_list[-1][:-1] + '- '"""
-    
+
     abc_notation_all_voices = '& '
     abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
     abc_notation_all_voices += '|\n'
     return abc_notation_all_voices
 
 
-def abc_both_hands(left_measure, right_measure, length, tones_with_ties):
-
+def abc_both_hands(left_measure, right_measure, length):
     left_hand_abc = abc(left_measure, length)
     right_hand_abc = abc(right_measure, length)
 

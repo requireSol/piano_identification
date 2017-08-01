@@ -2,6 +2,8 @@
 import creating_abc_file as c_n
 import recording as rec
 import time
+import multiprocessing
+
 
 path = 'sct2\\'
 c = raw_input('Mode: [1] = recording | [2] = creating abc-notation\n')
