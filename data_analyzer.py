@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def summing_up(temp, with_keys):
+def summing_up(temp, with_keys, tones_with_ties):
     # Bezeichnungen der Tasten in ABC-Notation mit Bs
     white_keys = ['A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,',
                   'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c',
@@ -34,6 +34,10 @@ def summing_up(temp, with_keys):
         anzahl.append((typ, zaehler))
     else:
         anzahl.append((allkeys[typ], zaehler))
+
+    """for index, tie in enumerate(tones_with_ties[:]):
+        tones_with_ties[index] = allkeys[tie]"""
+
     return anzahl
 
 
@@ -67,12 +71,12 @@ def voice_merging(sumup_frames, frame_count, voice_nr):
     return voices
 
 
-def analyze_pressed_keys(data):  # Bezieht sich auf einen Takt
+def analyze_pressed_keys(data, tones_with_ties):  # Bezieht sich auf einen Takt
     """data is an 2D numpy-array"""
 
     gesamt = []  # Hier werden die Anzahlen der auf einanderfolgenden 0,1,2 jeder Taste eines Taktes gespeichert
     for index in range(len(data[0])):  # 88 Durchläufe für 88 Tasten
-        gesamt.append(summing_up(data[:, index], 0))  # data[:, index]: Selektieren der Typen (0,1,2) von einer Taste
+        gesamt.append(summing_up(data[:, index], 0, tones_with_ties))  # data[:, index]: Selektieren der Typen (0,1,2) von einer Taste
 
     """Mit vorherigem Beispiel (4 Takte mit jeweils 8 Frames) Variable "gesamt":
         1. Takt: 
@@ -93,7 +97,7 @@ def analyze_pressed_keys(data):  # Bezieht sich auf einen Takt
 
     for index in range(4):
 
-        sumup_left.append(summing_up(left_voices[index], 1))
-        sumup_right.append(summing_up(right_voices[index], 1))
+        sumup_left.append(summing_up(left_voices[index], 1, tones_with_ties))
+        sumup_right.append(summing_up(right_voices[index], 1, tones_with_ties))
 
     return sumup_left, sumup_right

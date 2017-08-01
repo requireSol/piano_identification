@@ -3,7 +3,7 @@ import numpy as np
 from scipy import misc
 
 
-def get_data_from_image(image_count):
+def get_data_from_image(image_count, path):
     white_keys_x = [int(round(10 + 19.32 * x)) for x in range(52)] #Referenzpixel für die weißen Tasten
 
     black_keys_x = [20] #Referenzpixel für die schwarzen Tasten
@@ -25,8 +25,9 @@ def get_data_from_image(image_count):
     count = 0
     taktende_gesetzt = 0  # Wenn ein Taktende erkannt worden ist, wird das hier vermerkt (0 kein Taktende gesetzt, 1 Taktende gesetzt)
     measure = []  # Hier wird ein Takt zwischengespeichert, bevor er zu den gesamten Daten ergänzt wird
+    measure_number_tie = []
     for i in range(image_count):
-        image_asarray = misc.imread('sct2\\sct-' + str(i) + '.png')
+        image_asarray = misc.imread(path + 'sct-' + str(i) + '.png')
         # image_asarray = get_image_asarray('sct2\\sct-' + str(i) + '.png')
 
         data = []
@@ -60,10 +61,11 @@ def get_data_from_image(image_count):
                 measure = measure[temp1:] #Der neue Takt enthält bereits die restlichen Frames, die nicht mehr zum vorherigen Takt gehören
             count = 0 #Zähler für mögliche Taktstriche wird zurückgesetzt, da neuer Takt anfängt
             taktende_gesetzt = 0 #Neuer Takt hat angefangen, es muss noch ein Taktende irgendwann gesetzt werden
+            measure_number_tie += [len(whole_data)]
 
         f.write('\n')
 
     whole_data.append(np.asarray(measure)) #Rest nach dem Taktende des vorletzten Takt wird hinzugefügt, auch wenn es kein extra Taktende gibt
 
     f.close()
-    return whole_data
+    return whole_data, measure_number_tie

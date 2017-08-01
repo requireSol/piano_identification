@@ -17,36 +17,34 @@ def new_version(measure, measure_length):
             (16, 0.88, 1.00))
 
     pause = ((1, 0.07, 0.012),
-            (2, 0.012, 0.18),
-            (3, 0.18, 0.24),
-            (4, 0.24, 0.31),
-            (6, 0.31, 0.44),
-            (8, 0.44, 0.57),
-            (10, 0.57, 0.69),
-            (12, 0.69, 0.82),
-            (14, 0.82, 0.93),
-            (16, 0.93, 1.00))
+             (2, 0.012, 0.18),
+             (3, 0.18, 0.24),
+             (4, 0.24, 0.31),
+             (6, 0.31, 0.44),
+             (8, 0.44, 0.57),
+             (10, 0.57, 0.69),
+             (12, 0.69, 0.82),
+             (14, 0.82, 0.93),
+             (16, 0.93, 1.00))
     log = open('log1.txt', 'a')
     for voice in measure:
         tones_of_voice = []
         note_values_of_voice = []
-        # percent_values = []  # Eventuell Prozentwerte auf 100 ernuet hochrechnen
         for tone in voice:
             temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
             if temp > PAUSE_THRESHOLD and tone[0] == 'z':
                 log.write('z: ' + str(temp) + '\n')
-                for value, min, max in pause:
-                    if min < temp <= max:
+                for value, min_v, max_v in pause:
+                    if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
 
             elif temp > NOTE_THRESHOLD and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
-                for value, min, max in note:
-                    if min < temp <= max:
+                for value, min_v, max_v in note:
+                    if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
                         tones_of_voice.append(tone[0])
-                        # percent_values.append((tone, voice))
         log.write(str(measure_length) + '---------------------voice-------------\n')
 
         if sum(note_values_of_voice) == 16:
@@ -81,13 +79,18 @@ def abc(measure, measure_length):
 
     if len(abc_notation_all_voices_list) == 0:
         abc_notation_all_voices_list = ['z16 ']
+
+    """for tie in tones_with_ties:
+        if allkeys[tie] in abc_notation_all_voices_list[-1]:
+            abc_notation_all_voices_list[-1] = abc_notation_all_voices_list[-1][:-1] + '- '"""
+    
     abc_notation_all_voices = '& '
     abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
     abc_notation_all_voices += '|\n'
     return abc_notation_all_voices
 
 
-def abc_both_hands(left_measure, right_measure, length):
+def abc_both_hands(left_measure, right_measure, length, tones_with_ties):
 
     left_hand_abc = abc(left_measure, length)
     right_hand_abc = abc(right_measure, length)
