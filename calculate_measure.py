@@ -2,7 +2,17 @@
 import correct_rhythm as c_r
 
 
-def new_version(measure, measure_length):
+def new_version(measure, measure_length, tied_tones = ()):
+    white_keys = ['A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,',
+                  'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c',
+                  'd', 'e', 'f', 'g', 'a', 'b', "c'", "d'", "e'", "f'", "g'", "a'", "b'", "c''", "d''", "e''", "f''",
+                  "g''", "a''", "b''", "c'''"]
+    # WICHTIG: Tonart tastaturzusammenstellung mit neuer funktion
+    black_keys_b = ['_B,,,,', '_D,,,', '_E,,,', '_G,,,', '_A,,,', '_B,,,', '_D,,', '_E,,', '_G,,', '_A,,', '_B,,',
+                    '_D,', '_E,', '_G,', '_A,', '_B,', '_D', '_E', '_G', '_A', '_B', '_d', '_e', '_g', '_a', '_b',
+                    "_d'", "_e'", "_g'", "_a'", "_b'", "_d''", "_e''", "_g''", "_a''", "_b''"]
+    # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
+    allkeys = white_keys + black_keys_b + ['z']
 
     cons_pause_threshold = 0.07
     cons_note_threshold = 0.01
@@ -32,20 +42,20 @@ def new_version(measure, measure_length):
         tones_of_voice = []
         note_values_of_voice = []
         for tone in voice:
-            temp = (float(tone[1]) / float(measure_length))  # (Ton, Prozentwert)
+            temp = (float(tone[1]) / float(measure_length))  # (Prozentwert)
             if temp > cons_pause_threshold and tone[0] == 'z':
                 log.write('z: ' + str(temp) + '\n')
                 for value, min_v, max_v in pause:
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0])
+                        tones_of_voice.append(tone[0] + ' ')
 
             elif temp > cons_note_threshold and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
                 for value, min_v, max_v in note:
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0])
+                        tones_of_voice.append(tone[0] + ' ')
         log.write(str(measure_length) + '---------------------voice-------------\n')
 
         if sum(note_values_of_voice) == 16:
@@ -58,22 +68,30 @@ def new_version(measure, measure_length):
             note_values_of_voice = c_r.correct_invalid_rhythm(note_values_of_voice, tones_of_voice)
             # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
 
+            #TODO merge tones to chords
+
+        for tone in tied_tones:
+            if allkeys[tone] + ' ' == tones_of_voice[-1]:
+                pass
+                # tones_of_voice[-1] += '-'
+
         yield note_values_of_voice, tones_of_voice
 
     log.write('---------------------measure-------------\n')
     log.close()
 
 
-def abc(measure, measure_length):
+def abc(measure, measure_length, tied_notes):
     abc_notation_all_voices_list = []
-    voices_generator = new_version(measure, measure_length)
+    voices_generator = new_version(measure, measure_length, tied_notes)
     for voice in voices_generator:
         note_values_of_voice = voice[0]
         tones_of_voice = voice[1]
 
         abc_notation_one_voice = ''
         for i, combi in enumerate(note_values_of_voice):
-            if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z'):
+            if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z '):
+                # abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi)) + ' '
                 abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
             abc_notation_all_voices_list.append(abc_notation_one_voice)
@@ -91,8 +109,8 @@ def abc(measure, measure_length):
     return abc_notation_all_voices
 
 
-def abc_both_hands(left_measure, right_measure, length):
-    left_hand_abc = abc(left_measure, length)
-    right_hand_abc = abc(right_measure, length)
+def abc_both_hands(left_measure, right_measure, length, tied_notes):
+    left_hand_abc = abc(left_measure, length, tied_notes)
+    right_hand_abc = abc(right_measure, length, tied_notes)
 
     return left_hand_abc, right_hand_abc

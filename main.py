@@ -2,7 +2,6 @@
 import creating_abc_file as c_n
 import recording as rec
 import time
-import multiprocessing
 
 
 path = 'sct2\\'
