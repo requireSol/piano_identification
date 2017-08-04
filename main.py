@@ -5,7 +5,7 @@ import time
 
 
 path = 'sct2\\'
-c = raw_input('Mode: [1] = recording | [2] = creating abc-notation\n')
+c = input('Mode: [1] = recording | [2] = creating abc-notation\n')
 if c == '1':
     print('START')
     rec.prepare(path)

@@ -2,7 +2,7 @@
 import correct_rhythm as c_r
 
 
-def new_version(measure, measure_length, tied_tones = ()):
+def voices_generator(measure, measure_length, tied_tones):
     white_keys = ['A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,',
                   'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c',
                   'd', 'e', 'f', 'g', 'a', 'b', "c'", "d'", "e'", "f'", "g'", "a'", "b'", "c''", "d''", "e''", "f''",
@@ -38,6 +38,7 @@ def new_version(measure, measure_length, tied_tones = ()):
              (14, 0.82, 0.93),
              (16, 0.93, 1.00))
     log = open('log1.txt', 'a')
+
     for voice in measure:
         tones_of_voice = []
         note_values_of_voice = []
@@ -73,7 +74,15 @@ def new_version(measure, measure_length, tied_tones = ()):
         for tone in tied_tones:
             if allkeys[tone] + ' ' == tones_of_voice[-1]:
                 pass
-                # tones_of_voice[-1] += '-'
+                tones_of_voice[-1] += '-'
+
+        count = 0
+        for index, value in enumerate(note_values_of_voice[:]):
+            note_values_of_voice[index] = (value, count)
+            count += value
+
+
+        # print(note_values_of_voice)
 
         yield note_values_of_voice, tones_of_voice
 
@@ -83,16 +92,72 @@ def new_version(measure, measure_length, tied_tones = ()):
 
 def abc(measure, measure_length, tied_notes):
     abc_notation_all_voices_list = []
-    voices_generator = new_version(measure, measure_length, tied_notes)
-    for voice in voices_generator:
+    # voices_generator(measure, measure_length, tied_notes)
+
+    voices = list(voices_generator(measure, measure_length, tied_notes)) # enthält 4 stimmen
+    voices_unique_elements = set([])
+    for voice in voices: # Voice hat zwei Elemente: 0: Notenwerte, 1: Töne
+        voices_unique_elements.update(set(voice[0]))
+
+    # print(voices_unique_elements)
+
+    same_elements_with_tie = []
+    same_elements_without_tie = []
+    for element in voices_unique_elements:
+        temp_with_tie = []
+        temp_without_tie = []
+        for ind1, voice in enumerate(voices):
+            if element in voice[0]:
+                if not voice[1][voice[0].index(element)][0] == 'z':
+                    if not voice[1][voice[0].index(element)][-1] == '-':
+                        temp_without_tie.append((ind1, voice[0].index(element)))  # 0: voice_nr, 1: element_nr
+                    if voice[1][voice[0].index(element)][-1] == '-':
+                        temp_with_tie.append((ind1, voice[0].index(element)))  # 0: voice_nr, 1: element_nr
+
+                            # print(temp)
+        if len(temp_without_tie) > 1:
+            same_elements_without_tie.append(temp_without_tie)
+        if len(temp_with_tie) > 1:
+            same_elements_with_tie.append(temp_with_tie)
+
+    # print(same_elements)
+
+    for chord in same_elements_without_tie:
+        main_voice_index, main_index_to_be_changed = chord[0][0], chord[0][1]
+        voices[main_voice_index][1][main_index_to_be_changed] = '[' + voices[main_voice_index][1][main_index_to_be_changed]
+        for voice_index, index_to_be_changed in chord[1:]:
+            voices[main_voice_index][1][main_index_to_be_changed] += voices[voice_index][1][index_to_be_changed]
+            voices[voice_index][1][index_to_be_changed] = 'z '
+        voices[main_voice_index][1][main_index_to_be_changed] += ']'
+
+    for chord in same_elements_with_tie:
+        main_voice_index, main_index_to_be_changed = chord[0][0], chord[0][1]
+        voices[main_voice_index][1][main_index_to_be_changed] = '[' + voices[main_voice_index][1][main_index_to_be_changed]
+        for voice_index, index_to_be_changed in chord[1:]:
+            voices[main_voice_index][1][main_index_to_be_changed] += voices[voice_index][1][index_to_be_changed]
+            voices[voice_index][1][index_to_be_changed] = 'z '
+        voices[main_voice_index][1][main_index_to_be_changed] += ']-'
+
+    print('JAAAA')
+    print(voices)
+
+
+
+
+
+
+
+
+
+    for voice in voices_generator(measure, measure_length, tied_notes):
         note_values_of_voice = voice[0]
         tones_of_voice = voice[1]
 
         abc_notation_one_voice = ''
         for i, combi in enumerate(note_values_of_voice):
             if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z '):
-                # abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi)) + ' '
-                abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
+                abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi)) + ' '
+                # abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
             abc_notation_all_voices_list.append(abc_notation_one_voice)
 

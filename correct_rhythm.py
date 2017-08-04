@@ -67,7 +67,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
     value_1_notes = []
     value_3_notes = []
     for index, tone in enumerate(tones):
-        if tone == 'z':  # (Index of a pause | Length of a pause
+        if tone[0] == 'z':  # (Index of a pause | Length of a pause
             pauses.append((index, old_rhythm[index]))
             sum_pauses += old_rhythm[index]
             new_rhythm[index] = 0
@@ -130,11 +130,11 @@ def improve_valid_rhythm(old_rhythm, tones):
     value_1_notes = []
     value_3_notes = []
     for index, tone in enumerate(tones):
-        if tone == 'z':  # (Index of a pause | Length of a pause
+        if tone[0] == 'z':  # (Index of a pause | Length of a pause
             pauses.append((index, old_rhythm[index]))
             sum_pauses += old_rhythm[index]
             new_rhythm[index] = 0
-        elif not tone == 'z':  # (Index of a tone (with odd length) | Length of a tone)
+        elif not tone[0] == 'z':  # (Index of a tone (with odd length) | Length of a tone)
             if old_rhythm[index] == 1:
                 value_1_notes.append(index)
             elif old_rhythm[index] == 3:
