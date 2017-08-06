@@ -132,9 +132,9 @@ def abc(measure, measure_length, tied_notes):
 
     for chord in same_elements_with_tie:
         main_voice_index, main_index_to_be_changed = chord[0][0], chord[0][1]
-        voices[main_voice_index][1][main_index_to_be_changed] = '[' + voices[main_voice_index][1][main_index_to_be_changed]
+        voices[main_voice_index][1][main_index_to_be_changed] = '[' + voices[main_voice_index][1][main_index_to_be_changed][:-1]
         for voice_index, index_to_be_changed in chord[1:]:
-            voices[main_voice_index][1][main_index_to_be_changed] += voices[voice_index][1][index_to_be_changed]
+            voices[main_voice_index][1][main_index_to_be_changed] += voices[voice_index][1][index_to_be_changed][:-1]
             voices[voice_index][1][index_to_be_changed] = 'z '
         voices[main_voice_index][1][main_index_to_be_changed] += ']-'
 
@@ -149,14 +149,14 @@ def abc(measure, measure_length, tied_notes):
 
 
 
-    for voice in voices_generator(measure, measure_length, tied_notes):
+    for voice in voices:
         note_values_of_voice = voice[0]
         tones_of_voice = voice[1]
 
         abc_notation_one_voice = ''
         for i, combi in enumerate(note_values_of_voice):
-            if not combi == 0 and not (combi == 16 and tones_of_voice[i] == 'z '):
-                abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi)) + ' '
+            if not combi[0] == 0 and not (combi[0] == 16 and tones_of_voice[i] == 'z '):
+                abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi[0])) + ' '
                 # abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
             abc_notation_all_voices_list.append(abc_notation_one_voice)

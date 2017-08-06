@@ -77,6 +77,16 @@ def correct_invalid_rhythm(old_rhythm, tones):
             elif old_rhythm[index] == 3:
                 value_3_notes.append(index)
 
+    #Trivialcheck
+    diff_value = 16 - voice_length
+
+    if len(value_1_notes + value_3_notes) == diff_value:
+        for index in value_1_notes:
+            old_rhythm[index] = 2
+        for index in value_3_notes:
+            old_rhythm[index] = 4
+        return old_rhythm
+
     diff_value = 16 - voice_length + sum_pauses
 
     if len(pauses) > 0:
@@ -139,6 +149,9 @@ def improve_valid_rhythm(old_rhythm, tones):
                 value_1_notes.append(index)
             elif old_rhythm[index] == 3:
                 value_3_notes.append(index)
+
+    if len(value_1_notes) == 0 and len(value_3_notes) == 0:
+        return old_rhythm
 
     diff_value = 16 - voice_length + sum_pauses
 
