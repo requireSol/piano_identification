@@ -69,10 +69,8 @@ def voices_generator(measure, measure_length, tied_tones):
             note_values_of_voice = c_r.correct_invalid_rhythm(note_values_of_voice, tones_of_voice)
             # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
 
-            #TODO merge tones to chords
-
         for tone in tied_tones:
-            if allkeys[tone] + ' ' == tones_of_voice[-1]:
+            if tone == tones_of_voice[-1]:
                 pass
                 tones_of_voice[-1] += '-'
 
@@ -90,17 +88,40 @@ def voices_generator(measure, measure_length, tied_tones):
     log.close()
 
 
-def abc(measure, measure_length, tied_notes):
+def abc(measure, measure_length, tied_notes, tied_notes_with_voices):
+
     abc_notation_all_voices_list = []
     # voices_generator(measure, measure_length, tied_notes)
+    new_tied_notes_with_voices = []  # 0: tied_note, 1: voice_nr
 
     voices = list(voices_generator(measure, measure_length, tied_notes)) # enthält 4 stimmen
     voices_unique_elements = set([])
-    for voice in voices: # Voice hat zwei Elemente: 0: Notenwerte, 1: Töne
+    for ind, voice in enumerate(voices): # Voice hat zwei Elemente: 0: Notenwerte, 1: Töne
         voices_unique_elements.update(set(voice[0]))
+        #print(voice[1][-1][:-1])
+        #print(tied_notes)
+        if voice[1][-1][:-1] in tied_notes:
+            #print('JAAAA')
+            new_tied_notes_with_voices.append((voice[1][-1][:-1], ind))
+    #print(tied_notes_with_voices)
+    #print(new_tied_notes_with_voices)
+    for j in range(2):
+        print('START' + str(j))
+        for element in tied_notes_with_voices:
+            print(element)
+            print(voices[element[1]][1][0])
 
-    # print(voices_unique_elements)
+            if not voices[element[1]][1][0] == element[0]:
+                change_index = 0
+                for i in range(4):
+                    if voices[i][1][0] == element[0]:
+                        change_index = i
 
+                temp = voices[change_index]
+                voices[change_index] = voices[element[1]]
+                voices[element[1]] = temp
+                print('CHANGE')
+            print('-----------------')
     same_elements_with_tie = []
     same_elements_without_tie = []
     for element in voices_unique_elements:
@@ -108,17 +129,18 @@ def abc(measure, measure_length, tied_notes):
         temp_without_tie = []
         for ind1, voice in enumerate(voices):
             if element in voice[0]:
+                print(element)
                 if not voice[1][voice[0].index(element)][0] == 'z':
-                    if not voice[1][voice[0].index(element)][-1] == '-':
+                    if not voice[1][voice[0].index(element)][-1] == '-' and (voice[1][voice[0].index(element)] not in [i[0] for i in tied_notes_with_voices] and element[1] == 0):
                         temp_without_tie.append((ind1, voice[0].index(element)))  # 0: voice_nr, 1: element_nr
-                    if voice[1][voice[0].index(element)][-1] == '-':
-                        temp_with_tie.append((ind1, voice[0].index(element)))  # 0: voice_nr, 1: element_nr
+                   # if voice[1][voice[0].index(element)][-1] == '-': # and (ind1 == 0 and voice[1][voice[0].index(element)] in [i[0] for i in tied_notes_with_voices]):
+                   #     temp_with_tie.append((ind1, voice[0].index(element)))  # 0: voice_nr, 1: element_nr"""
 
                             # print(temp)
         if len(temp_without_tie) > 1:
             same_elements_without_tie.append(temp_without_tie)
-        if len(temp_with_tie) > 1:
-            same_elements_with_tie.append(temp_with_tie)
+        #if len(temp_with_tie) > 1:
+        #    same_elements_with_tie.append(temp_with_tie)
 
     # print(same_elements)
 
@@ -130,24 +152,13 @@ def abc(measure, measure_length, tied_notes):
             voices[voice_index][1][index_to_be_changed] = 'z '
         voices[main_voice_index][1][main_index_to_be_changed] += ']'
 
-    for chord in same_elements_with_tie:
+    """for chord in same_elements_with_tie:
         main_voice_index, main_index_to_be_changed = chord[0][0], chord[0][1]
         voices[main_voice_index][1][main_index_to_be_changed] = '[' + voices[main_voice_index][1][main_index_to_be_changed][:-1]
         for voice_index, index_to_be_changed in chord[1:]:
             voices[main_voice_index][1][main_index_to_be_changed] += voices[voice_index][1][index_to_be_changed][:-1]
             voices[voice_index][1][index_to_be_changed] = 'z '
-        voices[main_voice_index][1][main_index_to_be_changed] += ']-'
-
-    print('JAAAA')
-    print(voices)
-
-
-
-
-
-
-
-
+        voices[main_voice_index][1][main_index_to_be_changed] += ']-'"""
 
     for voice in voices:
         note_values_of_voice = voice[0]
@@ -155,7 +166,7 @@ def abc(measure, measure_length, tied_notes):
 
         abc_notation_one_voice = ''
         for i, combi in enumerate(note_values_of_voice):
-            if not combi[0] == 0 and not (combi[0] == 16 and tones_of_voice[i] == 'z '):
+            if not combi[0] == 0: # and not (combi[0] == 16 and tones_of_voice[i] == 'z '):
                 abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi[0])) + ' '
                 # abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
@@ -164,18 +175,18 @@ def abc(measure, measure_length, tied_notes):
     if len(abc_notation_all_voices_list) == 0:
         abc_notation_all_voices_list = ['z16 ']
 
-    """for tie in tones_with_ties:
-        if allkeys[tie] in abc_notation_all_voices_list[-1]:
-            abc_notation_all_voices_list[-1] = abc_notation_all_voices_list[-1][:-1] + '- '"""
-
     abc_notation_all_voices = '& '
     abc_notation_all_voices = abc_notation_all_voices.join(abc_notation_all_voices_list)
     abc_notation_all_voices += '|\n'
-    return abc_notation_all_voices
+    return abc_notation_all_voices, new_tied_notes_with_voices
 
 
-def abc_both_hands(left_measure, right_measure, length, tied_notes):
-    left_hand_abc = abc(left_measure, length, tied_notes)
-    right_hand_abc = abc(right_measure, length, tied_notes)
+def abc_both_hands(left_measure, right_measure, length, tied_notes, tied_note_with_voices_both):
+    #print(tied_note_with_voices_both)
+    temp1 = abc(left_measure, length, tied_notes, tied_note_with_voices_both[0])
+    left_hand_abc = temp1[0]
+    temp2 = abc(right_measure, length, tied_notes, tied_note_with_voices_both[1])
+    right_hand_abc = temp2[0]
+    tied_note_with_voices_return = [temp1[1], temp2[1]]
 
-    return left_hand_abc, right_hand_abc
+    return left_hand_abc, right_hand_abc, tied_note_with_voices_return
