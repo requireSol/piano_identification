@@ -27,9 +27,10 @@ def creating_abc_notation(path):
 
     temp = i_a.get_data_from_image(count, path)
     whole_data = temp[0]  # 15313
-    # print(temp[1])
-    # measure_number_ties = temp[1]
-    # measure_number_ties = []
+
+
+    voices_left = ['V:5\n', 'V:6\n', 'V:7\n' ,'V:8\n']
+    voices_right = ['V:1\n', 'V:2\n', 'V:3\n' ,'V:4\n']
     whole_not_left = ''
     whole_not_right = ''
     tied_note_with_voices = [[], []]
@@ -53,26 +54,24 @@ def creating_abc_notation(path):
                     #print(np.sum(whole_data[index][-y:, z]) + np.sum(whole_data[index + 1][:y, z]))
         # print(measure)
         temp = d_a.analyze_pressed_keys(measure)
-        # print(len(measure))
-        # LEFT: Index 0, RIGHT: Index 1
-        # print(index)
-        # print(measure_number_ties)
-        # if measure_number_ties == []: measure_number_ties = [[0, 0]]
+
         temp = c_m.abc_both_hands(temp[0], temp[1], len(measure), measure_number_ties, tied_note_with_voices)
-        # temp = c_m.set_length2(temp[0], temp[1], len(measure))
-        whole_not_left += temp[0]
-        whole_not_right += temp[1]
+
+        for i in range(4):
+            voices_left[i] += temp[0][i] + ' |'
+            voices_right[i] += temp[1][i] + ' |'
+
+        #whole_not_left += temp[0]
+        #whole_not_right += temp[1]
         tied_note_with_voices = temp[2]
-        # print(tied_note_with_voices)
+
     # print(measure_number_ties)
     f = open('abc_file.txt', 'w')
-    #whole_not_right = whole_not_right.replace('_E', 'E')
-    #whole_not_right = whole_not_right.replace('_A', 'A')
-    #whole_not_right = whole_not_right.replace('_B', 'B')
-    #whole_not_right = whole_not_right.replace('_D', 'D')
+    outputstr = 'L: 1/16\nK: C\n%%score { ( 1 2 3 4 ) | ( 5 6 7 8) } \nV:1 treble\nV:2 treble\nV:3 treble\nV:4 treble\nV:5 bass\nV:6 bass\nV:7 bass\nV:8 bass\n'
+    for i in range(4):
+        outputstr += voices_right[i] + '\n'
+    #outputstr += 'V:5 bass\nV:6 bass\nV:7 bass\nV:8 bass\n'
+    for i in range(4):
+        outputstr += voices_left[i] + '\n'
 
-    #whole_not_left = whole_not_left.replace('_E', 'E')
-    #whole_not_left = whole_not_left.replace('_A', 'A')
-    #whole_not_left = whole_not_left.replace('_B', 'B')
-    #whole_not_left = whole_not_left.replace('_D', 'D')
-    f.write('L: 1/16 \nV:1 \nK: Ab \n' + whole_not_right + 'V:2 bass \n' + whole_not_left)
+    f.write(outputstr)
