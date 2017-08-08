@@ -10,7 +10,7 @@ if c == '1':
     print('START')
     rec.prepare(path)
     rec.record(224, path)    # time in seconds
-    time.sleep(240)
+    # time.sleep(240)
 
     # c = raw_input("Press any key to stop the recording")
 elif c == '2':

@@ -58,8 +58,8 @@ def creating_abc_notation(path):
         temp = c_m.abc_both_hands(temp[0], temp[1], len(measure), measure_number_ties, tied_note_with_voices)
 
         for i in range(4):
-            voices_left[i] += temp[0][i] + ' |'
-            voices_right[i] += temp[1][i] + ' |'
+            voices_left[i] += temp[0][i] + ' | '
+            voices_right[i] += temp[1][i] + ' | '
 
         #whole_not_left += temp[0]
         #whole_not_right += temp[1]
@@ -70,8 +70,6 @@ def creating_abc_notation(path):
     outputstr = 'L: 1/16\nK: C\n%%score { ( 1 2 3 4 ) | ( 5 6 7 8) } \nV:1 treble\nV:2 treble\nV:3 treble\nV:4 treble\nV:5 bass\nV:6 bass\nV:7 bass\nV:8 bass\n'
     for i in range(4):
         outputstr += voices_right[i] + '\n'
-    #outputstr += 'V:5 bass\nV:6 bass\nV:7 bass\nV:8 bass\n'
-    for i in range(4):
         outputstr += voices_left[i] + '\n'
 
     f.write(outputstr)

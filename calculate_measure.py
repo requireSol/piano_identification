@@ -3,16 +3,6 @@ import correct_rhythm as c_r
 
 
 def voices_generator(measure, measure_length, tied_tones):
-    white_keys = ['A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,',
-                  'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c',
-                  'd', 'e', 'f', 'g', 'a', 'b', "c'", "d'", "e'", "f'", "g'", "a'", "b'", "c''", "d''", "e''", "f''",
-                  "g''", "a''", "b''", "c'''"]
-    # WICHTIG: Tonart tastaturzusammenstellung mit neuer funktion
-    black_keys_b = ['_B,,,,', '_D,,,', '_E,,,', '_G,,,', '_A,,,', '_B,,,', '_D,,', '_E,,', '_G,,', '_A,,', '_B,,',
-                    '_D,', '_E,', '_G,', '_A,', '_B,', '_D', '_E', '_G', '_A', '_B', '_d', '_e', '_g', '_a', '_b',
-                    "_d'", "_e'", "_g'", "_a'", "_b'", "_d''", "_e''", "_g''", "_a''", "_b''"]
-    # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
-    allkeys = white_keys + black_keys_b + ['z']
 
     cons_pause_threshold = 0.07
     cons_note_threshold = 0.01
@@ -49,14 +39,14 @@ def voices_generator(measure, measure_length, tied_tones):
                 for value, min_v, max_v in pause:
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0] + ' ')
+                        tones_of_voice.append(tone[0] + '%beam')
 
             elif temp > cons_note_threshold and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
                 for value, min_v, max_v in note:
                     if min_v < temp <= max_v:
                         note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0] + ' ')
+                        tones_of_voice.append(tone[0] + '%beam')
         log.write(str(measure_length) + '---------------------voice-------------\n')
 
         if sum(note_values_of_voice) == 16:
@@ -91,7 +81,7 @@ def abc(measure, measure_length, tied_notes, tied_notes_with_voices):
     # voices_generator(measure, measure_length, tied_notes)
     new_tied_notes_with_voices = []  # 0: tied_note, 1: voice_nr
 
-    voices = list(voices_generator(measure, measure_length, tied_notes)) # enthält 4 stimmen
+    voices = list(voices_generator(measure, measure_length, tied_notes))  # enthält 4 stimmen
     voices_unique_elements = set([])
     for ind, voice in enumerate(voices): # Voice hat zwei Elemente: 0: Notenwerte, 1: Töne
         voices_unique_elements.update(set(voice[0]))
@@ -165,24 +155,20 @@ def abc(measure, measure_length, tied_notes, tied_notes_with_voices):
         abc_notation_one_voice = ''
         for i, combi in enumerate(note_values_of_voice):
             if not combi[0] == 0:
-                if tones_of_voice[i] == 'z ' and not voice == voices[0]:
-                    tones_of_voice[i] = 'x '
-                abc_notation_one_voice += tones_of_voice[i].replace(' ', str(combi[0])) + ' '
+                if tones_of_voice[i] == 'z%beam' and not voice == voices[0]:
+                    tones_of_voice[i] = 'x%beam'
+                abc_notation_one_voice += tones_of_voice[i].replace('%beam', str(combi[0]))
 
 
                 # abc_notation_one_voice += tones_of_voice[i] + str(combi) + ' '
         if not abc_notation_one_voice == '':
             abc_notation_all_voices_list.append(abc_notation_one_voice)
 
-    if len(abc_notation_all_voices_list) == 0:
-        abc_notation_all_voices_list = ['z16 ']
-
-
     return abc_notation_all_voices_list, new_tied_notes_with_voices
 
 
 def abc_both_hands(left_measure, right_measure, length, tied_notes, tied_note_with_voices_both):
-    #print(tied_note_with_voices_both)
+
     temp1 = abc(left_measure, length, tied_notes, tied_note_with_voices_both[0])
     left_hand_abc = temp1[0]
     temp2 = abc(right_measure, length, tied_notes, tied_note_with_voices_both[1])

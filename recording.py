@@ -5,7 +5,8 @@ This module contains the fucntion "record" to capture screenshots of the screen 
 
 import time
 import os
-from mss import mss
+import mss
+import mss.tools
 
 
 def prepare(path):
@@ -19,8 +20,8 @@ def prepare(path):
 
 def record(time_amount, path):
 
-    for i in range(5)[::-1]:
-        print("RECORDING IS ABOUT TO START...%d" % (i + 1))
+    for i in range(5, 1, -1):
+        print("RECORDING IS ABOUT TO START...%d" % (i - 1))
         time.sleep(1)
     print("RECORDING HAS STARTED - IT WILL AUTOMATICALLY STOP IN %d SECONDS" % (time_amount + 2))
 
@@ -28,11 +29,13 @@ def record(time_amount, path):
     t_end = time.time() + time_amount + 1
 
     while time.time() < t_end:
-        with mss() as sct:
+        with mss.mss() as sct:
             mon = {'top': 905, 'left': 0, 'width': 1020, 'height': 25}
             # Save the picture
             output = path + '\sct-' + str(i) + '.png'.format(**mon)
-            sct.to_png(sct.get_pixels(mon), output)
+            sct_img = sct.grab(mon)
+            mss.tools.to_png(sct_img.rgb, sct_img.size, output)
+
             i += 1
 
     print('RECORDING HAS FINISHED')
