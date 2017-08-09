@@ -1,3 +1,4 @@
+import helper
 
 
 class InvalidSustainError(Exception):
@@ -5,20 +6,23 @@ class InvalidSustainError(Exception):
 
 
 class Rest:
-    def __init__(self, sustain_sixteenth):
 
-        if not isinstance(sustain_sixteenth, int) and 1 > sustain_sixteenth > 17:  # Eventuell ganze Note abfangen
-            raise InvalidSustainError()
-        else:
-            self.sustain_in_sixteenth = sustain_sixteenth
-            self.sustain_in_quarter = round(sustain_sixteenth // 4.0, 2) # vlt weg
+    is_rest = True
 
-        self.pause_visibility = True #Will be changed to 'x' if invisible
+    def __init__(self, sustain=4):
 
-    def change_sustain(self, new_sustain_sixteenth):
+        if helper.is_valid_sustain(sustain):
+            self.sustain = sustain
 
-        if not isinstance(new_sustain_sixteenth, int) and 1 > new_sustain_sixteenth > 17:  # Eventuell ganze Note abfangen
-            raise InvalidSustainError()
-        else:
-            self.sustain_in_sixteenth = new_sustain_sixteenth
-            self.sustain_in_quarter = round(new_sustain_sixteenth // 4.0, 2) # vlt weg
+        self.pause_visibility = True
+
+        self.str_format = 'X'
+
+        self.offset = 0
+
+        self.tie = ''
+
+    def change_sustain(self, new_sustain):
+
+        if helper.is_valid_sustain(new_sustain):
+            self.sustain = new_sustain

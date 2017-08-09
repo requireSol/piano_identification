@@ -1,60 +1,96 @@
-import note
+import helper
 import chord
 import rest
-
-
-class DifferentListLenghtesError(Exception):
-    """if Listlenghtes are different"""
-
-
-class InvalidObject(Exception):
-    """Other object was exspected"""
+import note
+import copy
 
 
 class Measure:
 
-    def __init__(self):
-        self.clef = 'treble'
-        self.time_signature = '4/4'
-        self.notes_chords_rests = []
-        self.valid_length = False
-        self.length = 0
+    def __init__(self, prev_measure):
+        self.voices = []
+        self.previous_measure = prev_measure
 
-    def add(self, note_chord_rest_objects):
-        if isinstance(note_chord_rest_objects, list):
-            for single_object in note_chord_rest_objects:
-                if not (isinstance(single_object, note.Note) or isinstance(single_object, chord.Chord) or isinstance(single_object, rest.Rest)):
-                    raise InvalidObject()
-                else:
-                    self.notes_chords_rests.append(single_object)
+    def add(self, voice_objects):
+        if isinstance(voice_objects, list):
+            for single_object in voice_objects:
+                if helper.is_valid_voice_object(single_object):
+                    self.voices.append(single_object)
 
-                    self.length += single_object.sustain_in_sixteenth
-        elif not (isinstance(note_chord_rest_objects, note.Note) or
-                  isinstance(note_chord_rest_objects, chord.Chord) or
-                  isinstance(note_chord_rest_objects, rest.Rest)):
-            raise InvalidObject()
+        elif helper.is_valid_voice_object(voice_objects):
+            self.voices.append(voice_objects)
+
+        self.update_voice_index_of_notes()
+
+    def get_voices(self):
+        return self.voices
+
+    def get_unique_offsets_with_sustains(self):
+
+        unique_offsets_with_sustains = set([])
+        for voice in self.voices:
+            offsets = voice.get_offsets()
+            sustains = voice.get_sustains()
+            for i in range(len(offsets)):
+                unique_offsets_with_sustains.update([(sustains[i], offsets[i])])
+                print(unique_offsets_with_sustains)
+
+        return unique_offsets_with_sustains
+
+    def merge_voices_to_chords(self):
+        unique_offsets_with_sustains = self.get_unique_offsets_with_sustains()
+        # all_valid_chords = []
+        print(unique_offsets_with_sustains)
+        for sustain, offset in unique_offsets_with_sustains:
+            possible_chord = []
+            for ind_voice, voice1 in enumerate(self.voices):
+                for ind_note, note1 in enumerate(voice1.notes_chords_rests):
+                    if note1.sustain == sustain and note1.offset == offset and note1.tie == '' and isinstance(note1, note.Note) and not(ind_note == 0 and self.previous_measure.voices[ind_voice].notes_chords_rests[-1].tie == 'start'):
+                        possible_chord.append(note1)
+                        if len(possible_chord) == 1:
+                            swap_index = (ind_voice, ind_note)
+                        elif len(possible_chord) > 1:
+                            voice1.notes_chords_rests[ind_note] = rest.Rest(sustain)
+            if len(possible_chord) > 1:
+                merged_chord = chord.Chord(possible_chord, sustain)
+                self.voices[swap_index[0]].notes_chords_rests[swap_index[1]] = merged_chord
+
+    def get_notes_with_ties_of_previous_measure(self):
+        notes_with_ties_of_previous_measure = []
+        if not self.previous_measure:
+            return notes_with_ties_of_previous_measure
         else:
-            self.notes_chords_rests.append(note_chord_rest_objects)
+            for voice in self.previous_measure.voices:
+                if voice.notes_chords_rests[-1] == 'start':
+                    notes_with_ties_of_previous_measure.append(voice.notes_chords_rests[-1]) #Eventuell DeepCopy
 
-            self.length += note_chord_rest_objects.sustain_in_sixteenth
+            return notes_with_ties_of_previous_measure
 
-    def check_for_valid_length(self):
-        if self.length == 16:
-            self.valid_length = True
-        else:
-            self.valid_length = False
+    def get_first_note_str_format_of_voices(self):
+        first_note_str_format_of_voices = []
+        for voice in self.voices:
+            first_note_str_format_of_voices.append(voice.notes_chords_rests[0].str_format)
 
-    def change_sustains(self, new_sustains_sixteenth):
-        if not len(new_sustains_sixteenth) == len(self.notes_chords_rests):
-            raise DifferentListLenghtesError()
+        return first_note_str_format_of_voices
 
-        for ind in list(range(0, len(new_sustains_sixteenth)))[::-1]:
-            if not (isinstance(self.notes_chords_rests[ind], note.Note) or isinstance(self.notes_chords_rests[ind], chord.Chord) or isinstance(
-                    self.notes_chords_rests[ind], rest.Rest)):
-                raise InvalidObject()
-            if new_sustains_sixteenth[ind] == 0: # Sonderregelung !!!!!!!! Wenn durch Rythmuskorrektur eine Note zur Länge Null wird, wird sie aus dem Takt entfernt
-                del self.notes_chords_rests[ind]
-                self.notes_chords_rests[ind].change_sustain(new_sustains_sixteenth[ind])
+    def arrange_voices_for_ties(self):
+        for j in range(len(self.voices)):
+            notes_with_ties_of_previous_measure = self.get_notes_with_ties_of_previous_measure()
+            first_note_str_format_of_voices = self.get_first_note_str_format_of_voices()
+            for note_with_tie in notes_with_ties_of_previous_measure:
+                cmp_voice_index = note_with_tie.voice_index
+                if not note_with_tie.str_format == first_note_str_format_of_voices[cmp_voice_index]:
+                    swap_index = 0
+                    for i in range(len(first_note_str_format_of_voices)):
+                        if note_with_tie.str_format == first_note_str_format_of_voices[i]:
+                            swap_index = i
+                temp = self.voices[swap_index]
+                self.voices[swap_index] = self.voices[note_with_tie.voice_index]
+                self.voices[note_with_tie.voice_index] = temp
+                break
+            self.update_voice_index_of_notes()
 
-
-
+    def update_voice_index_of_notes(self):
+        for ind, voice in enumerate(self.voices):
+            for single_object in voice.notes_chords_rests:
+                single_object.voice_index = ind

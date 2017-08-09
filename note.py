@@ -1,17 +1,5 @@
-class InvalidNoteError(Exception):
-    """Exception if given note does not match with possible notes"""
-
-
-class InvalidSustainError(Exception):
-    """Exception if sustain is smaller than 0"""
-
-
-class InvalidTieOptionError(Exception):
-    """Exception"""
-
-
-class InvalidNoteObject(Exception):
-    """Exception for other classes"""
+import helper
+import rest
 
 
 class Note:
@@ -27,25 +15,21 @@ class Note:
          'E+4', 'F+4', 'G+4', 'A+4', 'B+4', 'C+5', 'D+5', 'E+5', 'F+5', 'G+5', 'A+5', 'B+5', 'C+6', 'D+6', 'E+6',
          'F+6', 'G+6', 'A+6', 'B+6', 'C+7', 'D+7', 'E+7', 'F+7', 'G+7', 'A+7', 'B+7']
 
-    valid_tie_options = ['start', 'end', 'continue', '']
+    valid_tie_options = ['start', '']
 
-    def __init__(self, str_note, sustain_sixteenth=4, tie_option=''):
+    is_rest = False
 
-        if tie_option not in self.valid_tie_options:
-            raise InvalidTieOptionError
-        else:
+    def __init__(self, str_note, sustain=4, tie_option=''):
+
+        if helper.is_valid_tie_option(tie_option):
             self.tie = tie_option
 
-        if not isinstance(sustain_sixteenth, int) and 1 > sustain_sixteenth > 17:  #Eventuell ganze Note abfangen
-            raise InvalidSustainError()
-        else:
-            self.sustain_in_sixteenth = sustain_sixteenth
-            self.sustain_in_quarter = round(sustain_sixteenth // 4.0, 2) # vlt weg
+        if helper.is_valid_sustain(sustain):
+            self.sustain = sustain
 
-        if not isinstance(str_note, str) and str_note not in self.valid_note_names:
-            raise InvalidNoteError(str_note)
+        if helper.is_valid_note_name(str_note):
+            self.str_format = str_note
 
-        else:
             self.tone = str_note[0]
 
             self.pitch = str_note[-1]
@@ -56,24 +40,13 @@ class Note:
 
         self.offset = 0 # Will be filled in after adding to a measure
 
-    """def change_note(self, new_note):
+        self.voice_index = None #Will be set after adding the voice with this note to a measure
 
-        if not isinstance(new_note, str) and new_note not in self.valid_note_names:
-            raise InvalidNoteError(new_note)
+    def change_sustain(self, new_sustain):
 
-        else:
-            self.tone = new_note[0]
+        if helper.is_valid_sustain(new_sustain):
+            self.sustain = new_sustain
 
-            self.pitch = new_note[-1]
-            if len(new_note) == 3:
-                self.accidental = new_note[1]
-            else:
-                self.accidental = '='"""
+    def create_rest(self):
+        rest1 = rest.Rest(self.sustain)
 
-    def change_sustain(self, new_sustain_sixteenth):
-
-        if not isinstance(new_sustain_sixteenth, int) and 1 > new_sustain_sixteenth > 17:  # Eventuell ganze Note abfangen
-            raise InvalidSustainError()
-        else:
-            self.sustain_in_sixteenth = new_sustain_sixteenth
-            self.sustain_in_quarter = round(new_sustain_sixteenth // 4.0, 2) # vlt weg
