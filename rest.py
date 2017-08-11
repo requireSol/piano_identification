@@ -6,6 +6,7 @@ class InvalidSustainError(Exception):
 
 
 class Rest:
+    abc_rest_visibility = {True: 'z', False: 'x'}
 
     is_rest = True
 
@@ -14,7 +15,7 @@ class Rest:
         if helper.is_valid_sustain(sustain):
             self.sustain = sustain
 
-        self.pause_visibility = True
+        self.visibility = True
 
         self.str_format = 'X'
 
@@ -26,3 +27,10 @@ class Rest:
 
         if helper.is_valid_sustain(new_sustain):
             self.sustain = new_sustain
+
+    def convert_to_abc(self):
+
+        abc_format = self.abc_rest_visibility[self.visibility]
+        abc_format += str(self.sustain)
+
+        return abc_format

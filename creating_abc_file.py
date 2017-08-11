@@ -4,36 +4,33 @@ import calculate_measure as c_m
 import image_analyzer as i_a
 import numpy as np
 import os
+import score
+import part
 
 
 def creating_abc_notation(path):
-    white_keys = ['A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,',
-                  'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c',
-                  'd', 'e', 'f', 'g', 'a', 'b', "c'", "d'", "e'", "f'", "g'", "a'", "b'", "c''", "d''", "e''", "f''",
-                  "g''", "a''", "b''", "c'''"]
+    # Bezeichnungen der Tasten in ABC-Notation mit Bs
+    white_keys = ['A0', 'B0', 'C1', 'D1', 'E1', 'F1', 'G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2',
+                  'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+                  'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'F6', 'G6', 'A6', 'B6', 'C7', 'D7', 'E7',
+                  'F7', 'G7', 'A7', 'B7', 'C8']
     # WICHTIG: Tonart tastaturzusammenstellung mit neuer funktion
-    black_keys_b = ['_B,,,,', '_D,,,', '_E,,,', '_G,,,', '_A,,,', '_B,,,', '_D,,', '_E,,', '_G,,', '_A,,', '_B,,',
-                    '_D,', '_E,', '_G,', '_A,', '_B,', '_D', '_E', '_G', '_A', '_B', '_d', '_e', '_g', '_a', '_b',
-                    "_d'", "_e'", "_g'", "_a'", "_b'", "_d''", "_e''", "_g''", "_a''", "_b''"]
+    black_keys_b = ['B-0', 'D-1', 'E-1', 'G-1', 'A-1', 'B-1', 'D-2', 'E-2', 'G-2', 'A-2', 'B-2',
+                    'D-3', 'E-3', 'G-3', 'A-3', 'B-3', 'D-4', 'E-4', 'G-4', 'A-4', 'B-4', 'D-5', 'E-5', 'G-5', 'A-5',
+                    'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
     # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
     allkeys = white_keys + black_keys_b + ['z']
-
-    log = open('log1.txt', 'w')
-    log.write('')
-    log.close()
-    # path = 'sct\\'
 
     count = len(os.listdir(path))
 
     temp = i_a.get_data_from_image(count, path)
     whole_data = temp[0]  # 15313
+    score_object = score.Score()
+    left_part_object = part.Part('bass')
+    right_part_object = part.Part('treble')
 
+    previous_measures = (None, None)
 
-    voices_left = ['V:5\n', 'V:6\n', 'V:7\n' ,'V:8\n']
-    voices_right = ['V:1\n', 'V:2\n', 'V:3\n' ,'V:4\n']
-    whole_not_left = ''
-    whole_not_right = ''
-    tied_note_with_voices = [[], []]
     for index, measure in enumerate(whole_data):
         measure_number_ties = []
         y = len(measure) // 40
@@ -55,21 +52,16 @@ def creating_abc_notation(path):
         # print(measure)
         temp = d_a.analyze_pressed_keys(measure)
 
-        temp = c_m.abc_both_hands(temp[0], temp[1], len(measure), measure_number_ties, tied_note_with_voices)
+        measure_objects = c_m.abc_both_hands(temp[0], temp[1], len(measure), measure_number_ties, previous_measures)
+        previous_measures = measure_objects
 
-        for i in range(4):
-            voices_left[i] += temp[0][i] + ' | '
-            voices_right[i] += temp[1][i] + ' | '
+        left_part_object.add(measure_objects[0])
 
-        #whole_not_left += temp[0]
-        #whole_not_right += temp[1]
-        tied_note_with_voices = temp[2]
+        right_part_object.add(measure_objects[1])
 
-    # print(measure_number_ties)
+    score_object.add([right_part_object, left_part_object,])
+
+    outputstr = score_object.convert_to_abc()
     f = open('abc_file.txt', 'w')
-    outputstr = 'L: 1/16\nK: C\n%%score { ( 1 2 3 4 ) | ( 5 6 7 8) } \nV:1 treble\nV:2 treble\nV:3 treble\nV:4 treble\nV:5 bass\nV:6 bass\nV:7 bass\nV:8 bass\n'
-    for i in range(4):
-        outputstr += voices_right[i] + '\n'
-        outputstr += voices_left[i] + '\n'
 
     f.write(outputstr)

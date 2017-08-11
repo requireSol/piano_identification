@@ -7,6 +7,7 @@ class Voice:
     def __init__(self):
         self.notes_chords_rests = []
         self.length = 0
+        self.id = None
 
     def add(self, note_chord_rest_objects):
 
@@ -34,7 +35,7 @@ class Voice:
         if helper.has_same_lengthes(new_sustains, self.notes_chords_rests):
 
             for ind in list(range(0, len(new_sustains)))[::-1]:
-                if new_sustains[ind] == 0: # Sonderregelung !!!!!!!! Wenn durch Rythmuskorrektur eine Note zur Länge Null wird, wird sie aus dem Takt entfernt
+                if new_sustains[ind] == 0:  # Sonderregelung !!!!!!!! Wenn durch Rythmuskorrektur eine Note zur Länge Null wird, wird sie aus dem Takt entfernt
                     del self.notes_chords_rests[ind]
                 else:
                     self.notes_chords_rests[ind].change_sustain(new_sustains[ind])
@@ -59,7 +60,7 @@ class Voice:
 
         return all_offsets
 
-    def get_types(self): #note/chord or rest
+    def get_types(self):  # note/chord or rest
         all_is_rest = []
 
         for single_object in self.notes_chords_rests:
@@ -100,4 +101,10 @@ class Voice:
         for single_object in self.notes_chords_rests:
             self.length += single_object.sustain
 
+    def convert_to_abc(self):
 
+        abc_format = ''
+        for single_object in self.notes_chords_rests:
+            abc_format += single_object.convert_to_abc()
+
+        return abc_format + '|'

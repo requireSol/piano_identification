@@ -1,8 +1,10 @@
 import helper
-import rest
 
 
 class Note:
+    abc_pitches = {'0': ',,,,', '1': ',,,', '2': ',,', '3': ',', '4': '', '5': '', '6': "'", '7': "''", '8': "'''"}
+    abc_accidentals = {'+': '^', '-': '_', '=': '=', '': ''}
+    abc_tie = {'start': '-', '': ''}
     valid_note_names = \
         ['A0', 'B0', 'C1', 'D1', 'E1', 'F1', 'G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2', 'C3', 'D3',
          'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5',
@@ -36,7 +38,7 @@ class Note:
             if len(str_note) == 3:
                 self.accidental = str_note[1]
             else:
-                self.accidental = '='
+                self.accidental = ''  # Will be changed to '=' if necessary
 
         self.offset = 0 # Will be filled in after adding to a measure
 
@@ -47,6 +49,15 @@ class Note:
         if helper.is_valid_sustain(new_sustain):
             self.sustain = new_sustain
 
-    def create_rest(self):
-        rest1 = rest.Rest(self.sustain)
+    def convert_to_abc(self):
+
+        abc_format = self.abc_accidentals[self.accidental]
+        if int(self.pitch) < 5:
+            abc_format += self.tone
+        else:
+            abc_format += self.tone.lower()
+
+        abc_format += self.abc_pitches[self.pitch] + str(self.sustain) + self.abc_tie[self.tie]
+
+        return abc_format
 

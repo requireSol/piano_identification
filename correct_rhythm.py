@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#TODO Filling Notes comparing with Filling pauses for better results
 
 
 def without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes):

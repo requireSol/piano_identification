@@ -40,12 +40,17 @@ class Measure:
     def merge_voices_to_chords(self):
         unique_offsets_with_sustains = self.get_unique_offsets_with_sustains()
         # all_valid_chords = []
-        print(unique_offsets_with_sustains)
         for sustain, offset in unique_offsets_with_sustains:
             possible_chord = []
             for ind_voice, voice1 in enumerate(self.voices):
                 for ind_note, note1 in enumerate(voice1.notes_chords_rests):
-                    if note1.sustain == sustain and note1.offset == offset and note1.tie == '' and isinstance(note1, note.Note) and not(ind_note == 0 and self.previous_measure.voices[ind_voice].notes_chords_rests[-1].tie == 'start'):
+                    if self.previous_measure is None and note1.sustain == sustain and note1.offset == offset and note1.tie == '' and isinstance(note1, note.Note):
+                        possible_chord.append(note1)
+                        if len(possible_chord) == 1:
+                            swap_index = (ind_voice, ind_note)
+                        elif len(possible_chord) > 1:
+                            voice1.notes_chords_rests[ind_note] = rest.Rest(sustain)
+                    elif note1.sustain == sustain and note1.offset == offset and note1.tie == '' and isinstance(note1, note.Note) and not(ind_note == 0 and self.previous_measure.voices[ind_voice].notes_chords_rests[-1].tie == 'start'):
                         possible_chord.append(note1)
                         if len(possible_chord) == 1:
                             swap_index = (ind_voice, ind_note)
@@ -57,9 +62,10 @@ class Measure:
 
     def get_notes_with_ties_of_previous_measure(self):
         notes_with_ties_of_previous_measure = []
-        if not self.previous_measure:
+        if self.previous_measure is None:
             return notes_with_ties_of_previous_measure
         else:
+            print(self.previous_measure)
             for voice in self.previous_measure.voices:
                 if voice.notes_chords_rests[-1] == 'start':
                     notes_with_ties_of_previous_measure.append(voice.notes_chords_rests[-1]) #Eventuell DeepCopy
@@ -94,3 +100,21 @@ class Measure:
         for ind, voice in enumerate(self.voices):
             for single_object in voice.notes_chords_rests:
                 single_object.voice_index = ind
+
+    def convert_to_abc(self):
+
+        abc_formats = []
+        for voice in self.voices:
+            abc_formats.append(voice.convert_to_abc())
+
+        return abc_formats
+
+    def set_voices_id(self, ids):
+        for ind, voice in enumerate(self.voices):
+            voice.id = ids[ind]
+
+
+
+
+
+

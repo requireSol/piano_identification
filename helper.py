@@ -3,6 +3,7 @@ import chord
 import rest
 import measure
 import voice
+import part
 
 
 class InvalidNoteError(Exception):
@@ -111,6 +112,13 @@ def is_valid_measure_object(single_object):
 
 def is_valid_voice_object(single_object):
     if not isinstance(single_object, voice.Voice):
+        raise UnexpectedObjectError('Expected VoiceObject')
+
+    return True
+
+
+def is_valid_part_object(single_object):
+    if not isinstance(single_object, part.Part):
         raise UnexpectedObjectError('Expected VoiceObject')
 
     return True
