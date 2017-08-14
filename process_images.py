@@ -26,7 +26,7 @@ def create_score_object(path):
 
         temp = d_a.analyze_pressed_keys(measure)
         bass_measure_part = temp[0]
-        treble_measure_part = temp[0]
+        treble_measure_part = temp[1]
 
         temp = c_m.abc_both_hands(bass_measure_part, treble_measure_part, len(measure), tied_notes, previous_measures)
         bass_measure_object = temp[0]

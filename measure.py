@@ -2,7 +2,6 @@ import helper
 import chord
 import rest
 import note
-import copy
 
 
 class Measure:
@@ -115,7 +114,18 @@ class Measure:
         for ind, voice in enumerate(self.voices):
             voice.id = ids[ind]
 
+    def set_rests_invisible(self):
+        for single_object1 in self.voices[0].notes_chords_rests:
+            if single_object1.is_rest:
+                for voice in self.voices[1:]:
+                    for single_object2 in voice.notes_chords_rests:
+                        if not single_object2.is_rest and single_object2.offset == single_object1.offset and single_object2.sustain == single_object1.sustain:
+                            single_object1.visibility = False
 
+        for voice in self.voices[1:]:
+            for single_object in voice.notes_chords_rests:
+                if single_object.is_rest:
+                    single_object.visibility = False
 
 
 

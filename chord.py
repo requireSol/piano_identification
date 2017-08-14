@@ -44,10 +44,15 @@ class Chord:
                 abc_format_single += self.tones[i]
             else:
                 abc_format_single += self.tones[i].lower()
-
-            abc_format_single += self.abc_pitches[self.pitches[i]] + str(self.sustain)
+            if self.sustain == 10:
+                abc_format_single += self.abc_pitches[self.pitches[i]] + '8'
+            else:
+                abc_format_single += self.abc_pitches[self.pitches[i]] + str(self.sustain)
 
             abc_format += abc_format_single
+        if self.sustain == 10:
+            abc_format += ']-' + abc_format.replace('8', '2')
+            print(abc_format)
 
         abc_format += ']'
         # print(abc_format)

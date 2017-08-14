@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import correct_rhythm as c_r
 import measure
 import note
 import rest
@@ -34,8 +33,6 @@ def voices_generator(measure1, measure_length, tied_tones):
 
     for voice1 in measure1:
         voice_object = voice.Voice()
-        tones_of_voice = []
-        note_values_of_voice = []
         for tone in voice1:
             temp = (float(tone[1]) / float(measure_length))  # (Prozentwert)
             if temp > cons_pause_threshold and tone[0] == 'z':
@@ -45,9 +42,6 @@ def voices_generator(measure1, measure_length, tied_tones):
                         rest_object = rest.Rest(value)
                         voice_object.add(rest_object)
 
-                        note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0] + '%beam')
-
             elif temp > cons_note_threshold and not tone[0] == 'z':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
                 for value, min_v, max_v in notes:
@@ -55,19 +49,7 @@ def voices_generator(measure1, measure_length, tied_tones):
                         note_object = note.Note(tone[0], value)
                         voice_object.add(note_object)
 
-                        note_values_of_voice.append(value)
-                        tones_of_voice.append(tone[0] + '%beam')
         log.write(str(measure_length) + '---------------------voice-------------\n')
-
-        if sum(note_values_of_voice) == 16:
-            # print('YEAH' + str(note_values_of_voice) + str(tones_of_voice))
-            note_values_of_voice = c_r.improve_valid_rhythm(note_values_of_voice, tones_of_voice)
-            # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
-
-        else:
-            # print('BUHH' + str(note_values_of_voice) + str(tones_of_voice))
-            note_values_of_voice = c_r.correct_invalid_rhythm(note_values_of_voice, tones_of_voice)
-            # print(str(sum(note_values_of_voice)) + ': ' + str(note_values_of_voice))
 
         for tone in tied_tones:
             if tone == voice_object.notes_chords_rests[-1].str_format:
@@ -83,10 +65,6 @@ def voices_generator(measure1, measure_length, tied_tones):
 
 def abc(measure1, measure_length, tied_notes, previous_measure):
 
-    abc_notation_all_voices_list = []
-    # voices_generator(measure, measure_length, tied_notes)
-    new_tied_notes_with_voices = []  # 0: tied_note, 1: voice_nr
-
     voices = list(voices_generator(measure1, measure_length, tied_notes))  # enthält 4 stimmen
 
     measure_object = measure.Measure(previous_measure)
@@ -96,6 +74,8 @@ def abc(measure1, measure_length, tied_notes, previous_measure):
     measure_object.arrange_voices_for_ties()
 
     measure_object.merge_voices_to_chords()
+
+    measure_object.set_rests_invisible()
 
     return measure_object
 

@@ -59,8 +59,13 @@ class Note:
             abc_format += self.tone.lower()
 
         #print(self.tie)
+        if self.sustain == 10:
+            abc_format += self.abc_pitches[self.pitch] + '8-' + abc_format + self.abc_pitches[self.pitch] + '2' + self.abc_tie[self.tie]
+            print(abc_format)
 
-        abc_format += self.abc_pitches[self.pitch] + str(self.sustain) + self.abc_tie[self.tie]
+        else:
+            abc_format += self.abc_pitches[self.pitch] + str(self.sustain) + self.abc_tie[self.tie]
+
 
         return abc_format
 
