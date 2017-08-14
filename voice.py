@@ -7,7 +7,6 @@ class Voice:
     def __init__(self):
         self.notes_chords_rests = []
         self.length = 0
-        self.id = None
 
     def add(self, note_chord_rest_objects):
 
@@ -32,6 +31,8 @@ class Voice:
             return False
 
     def change_sustains(self, new_sustains):
+        print(new_sustains)
+        print(self.notes_chords_rests)
         if helper.has_same_lengthes(new_sustains, self.notes_chords_rests):
 
             for ind in list(range(0, len(new_sustains)))[::-1]:
@@ -43,6 +44,8 @@ class Voice:
             self.update_offsets()
 
             self.update_length()
+
+            #print(new_sustains)
 
     def get_sustains(self):
         all_sustains = []
@@ -80,12 +83,18 @@ class Voice:
 
         all_sustains = self.get_sustains()
 
+        print(all_sustains)
+
         all_is_rest = self.get_types()
+
+        #print(all_is_rest)
 
         if self.check_for_valid_length():
             new_all_sustains = correct_rhythm.improve_valid_rhythm(all_sustains, all_is_rest)
         else:
             new_all_sustains = correct_rhythm.correct_invalid_rhythm(all_sustains, all_is_rest)
+
+        print(new_all_sustains)
 
         self.change_sustains(new_all_sustains)
 

@@ -1,35 +1,21 @@
 # -*- coding: utf-8 -*-
-import creating_abc_file as c_n
 import recording as rec
-import time
+import process_images as p_i
 
-
-path = 'sct2\\'
+path = 'sct\\'
 c = input('Mode: [1] = recording | [2] = creating abc-notation\n')
 if c == '1':
     print('START')
     rec.prepare(path)
-    rec.record(224, path)    # time in seconds
+    rec.record(216, path)    # time in seconds
     # time.sleep(240)
 
     # c = raw_input("Press any key to stop the recording")
 elif c == '2':
 
-    c_n.creating_abc_notation(path)  # TODO über returnwert, hier zurückgeben
+    score_object = p_i.create_score_object(path)
 
-    """whole_data = i_a.get_data_from_image(12856)  # 15313
-    whole_not_left = ''
-    whole_not_right = ''
-    # print(len(whole_data))
-    for measure in whole_data:
-
-        # print(len(measure))
-        temp = d_a.analyze_pressed_keys(np.asarray(measure))
-        # LEFT: Index 0, RIGHT: Index 1
-        temp = c_m.set_length2(temp[0], temp[1], len(measure))
-        whole_not_left += temp[0]
-        whole_not_right += temp[1]
-
+    outputstr = score_object.convert_to_abc()
     f = open('abc_file.txt', 'w')
-    f.write('L: 1/16 \n' + 'V:1 \n' + whole_not_right + 'V:2 bass \n' + whole_not_left)
-"""
+
+    f.write(outputstr)

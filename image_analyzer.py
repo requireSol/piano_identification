@@ -3,7 +3,7 @@ import numpy as np
 from scipy import misc
 
 
-def get_data_from_image(image_count, path):
+def get_data_from_images(image_count, path):
     white_keys_x = [int(round(10 + 19.32 * x)) for x in range(52)] #Referenzpixel für die weißen Tasten
 
     black_keys_x = [20] #Referenzpixel für die schwarzen Tasten
@@ -48,13 +48,17 @@ def get_data_from_image(image_count, path):
         if np.sum(image_asarray[0:8, 30]) > 20: #Wenn an dieser Stelle graue Pixel snstatt schwarzen Pixel sind, kann es sich um ein Taktende handeln
             measure.append(data) #Frame wird zum Takt hinzugefügt
             count += 1 # Counter für mögliche Taktende Frames inkrementieren
+            f.write('4')
+            #print(np.asarray(data))
+
             if np.sum(np.asarray(data) == 0) and (taktende_gesetzt == 0): #Wenn gerade keine Tasten gedrückt werden Taktende noch nicht gesetzt worden ist, wird es jetzt gesetzt
                 # End of measure
                 whole_data.append(np.asarray(measure)) #Takt zu den gesamten Daten hinzufügen
                 measure = [] #Neuer Takt wird dann erstellt
                 taktende_gesetzt = 1 #
         else:
-            measure.append(data) #Frame wird zum Takt hinzugefügt ###TODO Übergebunden Flag oder sowas
+            f.write('3')
+            measure.append(data) #Frame wird zum Takt hinzugefügt
             if taktende_gesetzt == 0 and count > 0: #Falls oben kein Taktende gesetzt wurde, weil es keinen Frame gab, der hellgraue Pixel entält und in dem keine Tasten gedrückt waren
                 temp1 = (count // 2) * (-1) + 1 #In diesem Fall der Mittlere der Frames genommen, der graue Pixel für ein Taktende entählt
                 whole_data.append(np.asarray(measure[:temp1])) #Dementsprechend wird dieser Teil als Takt zu den gesamten Daten hinzugefügt
@@ -68,4 +72,4 @@ def get_data_from_image(image_count, path):
     whole_data.append(np.asarray(measure)) #Rest nach dem Taktende des vorletzten Takt wird hinzugefügt, auch wenn es kein extra Taktende gibt
 
     f.close()
-    return whole_data, measure_number_tie
+    return whole_data

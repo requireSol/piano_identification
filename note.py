@@ -45,6 +45,7 @@ class Note:
         self.voice_index = None #Will be set after adding the voice with this note to a measure
 
     def change_sustain(self, new_sustain):
+        #print(new_sustain)
 
         if helper.is_valid_sustain(new_sustain):
             self.sustain = new_sustain
@@ -56,6 +57,8 @@ class Note:
             abc_format += self.tone
         else:
             abc_format += self.tone.lower()
+
+        #print(self.tie)
 
         abc_format += self.abc_pitches[self.pitch] + str(self.sustain) + self.abc_tie[self.tie]
 

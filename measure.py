@@ -33,7 +33,7 @@ class Measure:
             sustains = voice.get_sustains()
             for i in range(len(offsets)):
                 unique_offsets_with_sustains.update([(sustains[i], offsets[i])])
-                print(unique_offsets_with_sustains)
+                #print(unique_offsets_with_sustains)
 
         return unique_offsets_with_sustains
 
@@ -62,13 +62,15 @@ class Measure:
 
     def get_notes_with_ties_of_previous_measure(self):
         notes_with_ties_of_previous_measure = []
+
         if self.previous_measure is None:
             return notes_with_ties_of_previous_measure
         else:
-            print(self.previous_measure)
+            #print(self.previous_measure)
             for voice in self.previous_measure.voices:
-                if voice.notes_chords_rests[-1] == 'start':
+                if voice.notes_chords_rests[-1].tie == 'start':
                     notes_with_ties_of_previous_measure.append(voice.notes_chords_rests[-1]) #Eventuell DeepCopy
+            #print(notes_with_ties_of_previous_measure)
 
             return notes_with_ties_of_previous_measure
 
@@ -90,10 +92,10 @@ class Measure:
                     for i in range(len(first_note_str_format_of_voices)):
                         if note_with_tie.str_format == first_note_str_format_of_voices[i]:
                             swap_index = i
-                temp = self.voices[swap_index]
-                self.voices[swap_index] = self.voices[note_with_tie.voice_index]
-                self.voices[note_with_tie.voice_index] = temp
-                break
+                    temp = self.voices[swap_index]
+                    self.voices[swap_index] = self.voices[note_with_tie.voice_index]
+                    self.voices[note_with_tie.voice_index] = temp
+                    break
             self.update_voice_index_of_notes()
 
     def update_voice_index_of_notes(self):

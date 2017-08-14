@@ -1,11 +1,25 @@
 # -*- coding: utf-8 -*-
 #TODO Filling Notes comparing with Filling pauses for better results
+#TODO Improve whole process
 
 
-def without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes):
+def without_pauses(diff_value, new_rhythm, tones):
+    value_1_notes = []
+    value_3_notes = []
+    for index, is_rest in enumerate(tones):
+        if not is_rest:
+            #if diff_value == 0: return new_rhythm
+            if new_rhythm[index] == 1:
+                value_1_notes.append(index)
+                #diff_value -= 1
+            elif new_rhythm[index] == 3:
+                value_3_notes.append(index)
+                #diff_value -= 1
+
     if diff_value > 0:  # and len(value_3_notes + value_1_notes) > 0:
         for index in value_1_notes:
             new_rhythm[index] = 2
+
         for index in value_3_notes:
             new_rhythm[index] = 4
 
@@ -96,7 +110,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
             return new_rhythm
 
         if diff_value < 0:  # Springe zum Verfahren, als ob ein Takt keine Pause hätte und zu lang wäre
-            new_rhythm = without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes)
+            new_rhythm = without_pauses(diff_value, new_rhythm, tones)
 
             return new_rhythm
 
@@ -118,7 +132,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
                 return new_rhythm
 
             if diff_value < 0:  # Springe zum Verfahren, als ob ein Takt keine pause hätte und zu lang wäre
-                new_rhythm = without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes)
+                new_rhythm = without_pauses(diff_value, new_rhythm, tones)
 
                 return new_rhythm
 
@@ -128,7 +142,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
             return new_rhythm
             # Pause wieder auffüllen
     elif len(pauses) == 0:
-        new_rhythm = without_pauses(diff_value, new_rhythm, value_3_notes, value_1_notes)
+        new_rhythm = without_pauses(diff_value, new_rhythm, tones)
 
         return new_rhythm
 

@@ -50,5 +50,5 @@ class Chord:
             abc_format += abc_format_single
 
         abc_format += ']'
-        print(abc_format)
+        # print(abc_format)
         return abc_format
