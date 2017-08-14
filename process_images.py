@@ -22,6 +22,8 @@ def create_score_object(path):
         else:
             tied_notes = d_a.analyze_for_ties(measure, measure_arrays[index+1])
 
+        #TODO Tonart bestimmen und Tastatur dementsprechend zusammenbauen
+
         temp = d_a.analyze_pressed_keys(measure)
         bass_measure_part = temp[0]
         treble_measure_part = temp[0]

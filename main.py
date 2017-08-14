@@ -8,9 +8,8 @@ if c == '1':
     print('START')
     rec.prepare(path)
     rec.record(216, path)    # time in seconds
-    # time.sleep(240)
 
-    # c = raw_input("Press any key to stop the recording")
+
 elif c == '2':
 
     score_object = p_i.create_score_object(path)
