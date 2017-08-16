@@ -7,28 +7,23 @@ import part
 
 
 class InvalidNoteError(Exception):
-    """Exception if given note does not match with possible notes"""
+    """Exception wenn es sich um keine gültige Note handelt"""
 
 
 class InvalidSustainError(Exception):
-    """Exception if sustain is smaller than 0"""
+    """Exception wenn es sich um keine gültige Ton/Akkord/Pausenlänge handelt"""
 
 
 class InvalidTieOptionError(Exception):
-    """Exception"""
+    """Exception wenn es sich um keine gültige Übergebundenoption handelt"""
 
 
 class UnexpectedObjectError(Exception):
-    """Exception for other classes"""
-
-
-class InvalidNotesListError(Exception):
-
-    """if given param isnt list"""
+    """Exception wenn es sich nicht um das erwartete Object handelt"""
 
 
 class DifferentListLenghtesError(Exception):
-    """if Listlenghtes are different"""
+    """Exception wenn zwei Listen nicht die gleiche Länge haben"""
 
 
 def is_valid_sustain(sustain):

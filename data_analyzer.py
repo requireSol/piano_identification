@@ -104,16 +104,15 @@ def analyze_pressed_keys(data):  # Bezieht sich auf einen Takt
 
 
 def analyze_for_ties(measure1, next_measure):
-    # Bezeichnungen der Tasten in ABC-Notation mit Bs
+
     white_keys = ['A0', 'B0', 'C1', 'D1', 'E1', 'F1', 'G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2',
                   'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
                   'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'F6', 'G6', 'A6', 'B6', 'C7', 'D7', 'E7',
                   'F7', 'G7', 'A7', 'B7', 'C8']
-    # WICHTIG: Tonart tastaturzusammenstellung mit neuer funktion
+
     black_keys_b = ['B-0', 'D-1', 'E-1', 'G-1', 'A-1', 'B-1', 'D-2', 'E-2', 'G-2', 'A-2', 'B-2',
                     'D-3', 'E-3', 'G-3', 'A-3', 'B-3', 'D-4', 'E-4', 'G-4', 'A-4', 'B-4', 'D-5', 'E-5', 'G-5', 'A-5',
                     'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
-    # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
     allkeys = white_keys + black_keys_b + ['z']
 
     y = len(measure1) // 40
@@ -122,13 +121,9 @@ def analyze_for_ties(measure1, next_measure):
     measure_ties = []
     for z in range(88):
         if np.sum(measure1[-y:, z]) == y and np.sum(next_measure[:y, z]) == y:  # 1 Linke Hand
-            # measure_number_ties += [[index, z]]  # Hand, Taktnummer, Index
             measure_ties += [allkeys[z]]
-            # print(whole_data[index][-y:, z] + whole_data[index+1][:y, z])
-            # print(np.sum(whole_data[index][-y:, z]) + np.sum(whole_data[index+1][:y, z]))
+
         if np.sum(measure1[-y:, z]) == 2 * y and np.sum(next_measure[:y, z]) == y * 2:  # 2 Rechte Hand
-            # measure_number_ties += [[index, z]]
             measure_ties += [allkeys[z]]
-            # print(whole_data[index][-y:, z] + whole_data[index + 1][:y, z])
-            # print(np.sum(whole_data[index][-y:, z]) + np.sum(whole_data[index + 1][:y, z]))
+
     return measure_ties

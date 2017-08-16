@@ -22,6 +22,7 @@ class Note:
     is_rest = False
 
     def __init__(self, str_note, sustain=4, tie_option=''):
+        """Initialisiert das Note-Object mit den übergebenen Parametern"""
 
         if helper.is_valid_tie_option(tie_option):
             self.tie = tie_option
@@ -40,17 +41,18 @@ class Note:
             else:
                 self.accidental = ''  # Will be changed to '=' if necessary
 
-        self.offset = 0 # Will be filled in after adding to a measure
+        self.offset = 0
 
-        self.voice_index = None #Will be set after adding the voice with this note to a measure
+        self.voice_index = None
 
     def change_sustain(self, new_sustain):
-        #print(new_sustain)
+        """Ändert die Tonlänge"""
 
         if helper.is_valid_sustain(new_sustain):
             self.sustain = new_sustain
 
     def convert_to_abc(self):
+        """Gibt das Note-Object als ABC-Notation zurück"""
 
         abc_format = self.abc_accidentals[self.accidental]
         if int(self.pitch) < 5:
@@ -58,14 +60,12 @@ class Note:
         else:
             abc_format += self.tone.lower()
 
-        #print(self.tie)
         if self.sustain == 10:
-            abc_format += self.abc_pitches[self.pitch] + '8-' + abc_format + self.abc_pitches[self.pitch] + '2' + self.abc_tie[self.tie]
+            abc_format += self.abc_pitches[self.pitch] + '8-' + abc_format + \
+                          self.abc_pitches[self.pitch] + '2' + self.abc_tie[self.tie]
             print(abc_format)
 
         else:
             abc_format += self.abc_pitches[self.pitch] + str(self.sustain) + self.abc_tie[self.tie]
 
-
         return abc_format
-

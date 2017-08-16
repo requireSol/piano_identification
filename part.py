@@ -4,7 +4,7 @@ import helper
 class Part:
     voice_id_counter = 0
 
-    abc_clefs = {'treble': 'treble', 'bass' : 'bass'}
+    abc_clefs = {'treble': 'treble', 'bass': 'bass'}
 
     def __init__(self, clef='treble'):
         self.measures = []
@@ -13,6 +13,7 @@ class Part:
         Part.voice_id_counter += 4
 
     def add(self, measure_objects):
+        """Fügt zum Part-Object ein oder mehrere Measure-Objects hinzu"""
         if isinstance(measure_objects, list):
             for single_object in measure_objects:
                 if helper.is_valid_measure_object(single_object):
@@ -21,16 +22,8 @@ class Part:
         elif helper.is_valid_measure_object(measure_objects):
             self.measures.append(measure_objects)
 
-    def check_voices_for_same_measure_count(self):
-        if len(self.measures) > 1:
-            cmp_measures_list = self.measures[0].measures
-            for voice in self.measures[1:]:
-                if not len(cmp_measures_list) == len(voice.measures):
-                    return False
-
-            return True
-
     def convert_to_abc(self):
+        """Gibt das Part-Object als ABC-Notation zurück"""
         all_measures_of_voices = []
         score_instruction = ' ( '
         for ind, voice in enumerate(self.measures[0].convert_to_abc()):
@@ -45,6 +38,3 @@ class Part:
                 all_measures_of_voices[i] += voices_of_one_measure[i]
 
         return all_measures_of_voices, score_instruction
-
-
-

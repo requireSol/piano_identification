@@ -7,6 +7,7 @@ class Chord:
     is_rest = False
 
     def __init__(self, list_note_objects, sustain=4):
+        """Initialisiert das Note-Object mit den übergebenen Parametern"""
         self.str_format = []
         self.tones = []
         self.pitches = []
@@ -32,11 +33,13 @@ class Chord:
         self.tie = ''
 
     def change_sustain(self, new_sustain):
+        """Ändert die Akkordlänge"""
 
         if helper.is_valid_sustain(new_sustain):
             self.sustain = new_sustain
 
     def convert_to_abc(self):
+        """Gibt das Chord-Object als ABC-Notation zurück"""
         abc_format = '['
         for i in range(len(self.tones)):
             abc_format_single = self.abc_accidentals[self.accidentals[i]]
@@ -55,5 +58,5 @@ class Chord:
             print(abc_format)
 
         abc_format += ']'
-        # print(abc_format)
+
         return abc_format

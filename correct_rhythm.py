@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#TODO Filling Notes comparing with Filling pauses for better results
-#TODO Improve whole process
+# TODO Filling Notes comparing with Filling pauses for better results
+# TODO Improve whole process
 
 
 def without_pauses(diff_value, new_rhythm, tones):
@@ -8,15 +8,12 @@ def without_pauses(diff_value, new_rhythm, tones):
     value_3_notes = []
     for index, is_rest in enumerate(tones):
         if not is_rest:
-            #if diff_value == 0: return new_rhythm
             if new_rhythm[index] == 1:
                 value_1_notes.append(index)
-                #diff_value -= 1
             elif new_rhythm[index] == 3:
                 value_3_notes.append(index)
-                #diff_value -= 1
 
-    if diff_value > 0:  # and len(value_3_notes + value_1_notes) > 0:
+    if diff_value > 0:
         for index in value_1_notes:
             new_rhythm[index] = 2
 
@@ -92,7 +89,7 @@ def correct_invalid_rhythm(old_rhythm, tones):
             elif old_rhythm[index] == 3:
                 value_3_notes.append(index)
 
-    #Trivialcheck
+    # Trivialcheck
     diff_value = 16 - voice_length
 
     if len(value_1_notes + value_3_notes) == diff_value:
@@ -114,7 +111,6 @@ def correct_invalid_rhythm(old_rhythm, tones):
 
             return new_rhythm
 
-        # decrease_odd_value_count = len(odd_note_values) - diff_value
         if diff_value > 0 and len(value_3_notes + value_1_notes) > 0:
             for index in value_1_notes:
                 new_rhythm[index] = 2

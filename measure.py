@@ -7,10 +7,12 @@ import note
 class Measure:
 
     def __init__(self, prev_measure):
+
         self.voices = []
         self.previous_measure = prev_measure
 
     def add(self, voice_objects):
+        """Fügt zum SMeasure-Object ein oder mehrere Voice-Objects hinzu"""
         if isinstance(voice_objects, list):
             for single_object in voice_objects:
                 if helper.is_valid_voice_object(single_object):
@@ -22,9 +24,11 @@ class Measure:
         self.update_voice_index_of_notes()
 
     def get_voices(self):
+        """Gibt Liste mit zugehörigen Voice-Objects zurück"""
         return self.voices
 
     def get_unique_offsets_with_sustains(self):
+        """Gibt eine Menge mit allen möglichen Kombinationen von Offset und Tonlänge der zugehörigen Stimmen zurück"""
 
         unique_offsets_with_sustains = set([])
         for voice in self.voices:
@@ -32,13 +36,14 @@ class Measure:
             sustains = voice.get_sustains()
             for i in range(len(offsets)):
                 unique_offsets_with_sustains.update([(sustains[i], offsets[i])])
-                #print(unique_offsets_with_sustains)
 
         return unique_offsets_with_sustains
 
     def merge_voices_to_chords(self):
+        """Fügt Töne mit gleicher Länge, gleichem Offset und ohne Haltebogen zu einem Akkord zusammen"""
+
         unique_offsets_with_sustains = self.get_unique_offsets_with_sustains()
-        # all_valid_chords = []
+
         for sustain, offset in unique_offsets_with_sustains:
             possible_chord = []
             for ind_voice, voice1 in enumerate(self.voices):
@@ -60,20 +65,20 @@ class Measure:
                 self.voices[swap_index[0]].notes_chords_rests[swap_index[1]] = merged_chord
 
     def get_notes_with_ties_of_previous_measure(self):
+        """Gibt eine Liste mit den Note-Objects, die aus vorherigem Takt übergebunden sind, zurück"""
         notes_with_ties_of_previous_measure = []
 
         if self.previous_measure is None:
             return notes_with_ties_of_previous_measure
         else:
-            #print(self.previous_measure)
             for voice in self.previous_measure.voices:
                 if voice.notes_chords_rests[-1].tie == 'start':
-                    notes_with_ties_of_previous_measure.append(voice.notes_chords_rests[-1]) #Eventuell DeepCopy
-            #print(notes_with_ties_of_previous_measure)
+                    notes_with_ties_of_previous_measure.append(voice.notes_chords_rests[-1])
 
             return notes_with_ties_of_previous_measure
 
     def get_first_note_str_format_of_voices(self):
+        """Gibt eine Liste, mit den Stringformaten des ersten Tones / Pause der zugehörigen Stimmten zurück"""
         first_note_str_format_of_voices = []
         for voice in self.voices:
             first_note_str_format_of_voices.append(voice.notes_chords_rests[0].str_format)
@@ -81,6 +86,7 @@ class Measure:
         return first_note_str_format_of_voices
 
     def arrange_voices_for_ties(self):
+        """Ordnet die Stimmen so an, dass aus vorherigem Takt übergebundene Noten in den gleichen Stimmten liegen"""
         for j in range(len(self.voices)):
             notes_with_ties_of_previous_measure = self.get_notes_with_ties_of_previous_measure()
             first_note_str_format_of_voices = self.get_first_note_str_format_of_voices()
@@ -98,11 +104,13 @@ class Measure:
             self.update_voice_index_of_notes()
 
     def update_voice_index_of_notes(self):
+        """Erneuert die Indices der Stimmen in den zugehörigen Noten / Akkorden / Pausen"""
         for ind, voice in enumerate(self.voices):
             for single_object in voice.notes_chords_rests:
                 single_object.voice_index = ind
 
     def convert_to_abc(self):
+        """Gibt eine Liste der zugehörigen Voice-Objects als ABC-Notation zurück"""
 
         abc_formats = []
         for voice in self.voices:
@@ -111,10 +119,12 @@ class Measure:
         return abc_formats
 
     def set_voices_id(self, ids):
+        """Weißt den Stimmen ihre übergebene ID zu"""
         for ind, voice in enumerate(self.voices):
             voice.id = ids[ind]
 
     def set_rests_invisible(self):
+        """Macht alle Pausen ab Stimme 2 unsichtbar und alle Pausen aus Stimme 1, die Noten verdecken könnten"""
         for single_object1 in self.voices[0].notes_chords_rests:
             if single_object1.is_rest:
                 for voice in self.voices[1:]:
