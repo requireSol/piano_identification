@@ -32,7 +32,9 @@ def get_data_from_images(image_count, path):
 
         data = []
         # check the keys
-        y = 14
+        if image_asarray[17, 4][0] < 100 and image_asarray[11, 4][1] < 100 and image_asarray[11, 4][2] < 100:
+            continue
+        y = 19
         for x in keys: # Den Status jeder Taste anhand eines Pixels jeder Taste überprüfen
             temp = image_asarray[y, x]
 
@@ -51,18 +53,24 @@ def get_data_from_images(image_count, path):
             f.write('4')
             #print(np.asarray(data))
 
-            if np.sum(np.asarray(data) == 0) and (taktende_gesetzt == 0): #Wenn gerade keine Tasten gedrückt werden Taktende noch nicht gesetzt worden ist, wird es jetzt gesetzt
+            #Wenn Taktende noch nicht gesetzt worden ist, wird es jetzt gesetzt
+            if taktende_gesetzt == 0:
                 # End of measure
-                whole_data.append(np.asarray(measure)) #Takt zu den gesamten Daten hinzufügen
-                measure = [] #Neuer Takt wird dann erstellt
-                taktende_gesetzt = 1 #
+                if len(measure) > 10:
+                    whole_data.append(np.asarray(measure)) #Takt zu den gesamten Daten hinzufügen
+                    measure = [] #Neuer Takt wird dann erstellt
+                    taktende_gesetzt = 1 #
+                #print(i)
         else:
+            #print('häufiger Fall')
             f.write('3')
             measure.append(data) #Frame wird zum Takt hinzugefügt
-            if taktende_gesetzt == 0 and count > 0: #Falls oben kein Taktende gesetzt wurde, weil es keinen Frame gab, der hellgraue Pixel entält und in dem keine Tasten gedrückt waren
+            # DIESE IF-ABFRAGE SCHEINT NIE BENUTZT ZU WERDEN
+            """if taktende_gesetzt == 0 and count > 0: #Falls oben kein Taktende gesetzt wurde, weil es keinen Frame gab, der hellgraue Pixel entält und in dem keine Tasten gedrückt waren
+                print('test')
                 temp1 = (count // 2) * (-1) + 1 #In diesem Fall der Mittlere der Frames genommen, der graue Pixel für ein Taktende entählt
                 whole_data.append(np.asarray(measure[:temp1])) #Dementsprechend wird dieser Teil als Takt zu den gesamten Daten hinzugefügt
-                measure = measure[temp1:] #Der neue Takt enthält bereits die restlichen Frames, die nicht mehr zum vorherigen Takt gehören
+                measure = measure[temp1:] #Der neue Takt enthält bereits die restlichen Frames, die nicht mehr zum vorherigen Takt gehören"""
             count = 0 #Zähler für mögliche Taktstriche wird zurückgesetzt, da neuer Takt anfängt
             taktende_gesetzt = 0 #Neuer Takt hat angefangen, es muss noch ein Taktende irgendwann gesetzt werden
             measure_number_tie += [len(whole_data)]

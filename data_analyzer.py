@@ -187,5 +187,18 @@ def get_key(data):
     return key
 
 
+def search_for_incorrect_measures(data):
+    print(data[0])
+    frame_counts = []
+    for measure in data:
+        frame_counts.append(len(measure))
+
+    avg = (sum(frame_counts) // len(frame_counts))
+
+    for ind, frame_count in enumerate(frame_counts):
+        if frame_count > (avg + avg // 4):
+            print('Taktende nicht erkannt / übersehen')
+        if frame_count < (avg - avg // 4):
+            print('Rhythmus wird wahrscheinlich nicht richtig erkannt')
 
 
