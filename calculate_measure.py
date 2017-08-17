@@ -35,14 +35,14 @@ def voices_generator(measure1, measure_length, tied_tones):
         voice_object = voice.Voice()
         for tone in voice1:
             temp = (float(tone[1]) / float(measure_length))  # (Prozentwert)
-            if temp > cons_pause_threshold and tone[0] == 'z':
+            if temp > cons_pause_threshold and tone[0] == 'X':
                 log.write('z: ' + str(temp) + '\n')
                 for value, min_v, max_v in rests:
                     if min_v < temp <= max_v:
                         rest_object = rest.Rest(value)
                         voice_object.add(rest_object)
 
-            elif temp > cons_note_threshold and not tone[0] == 'z':
+            elif temp > cons_note_threshold and not tone[0] == 'X':
                 log.write(tone[0] + ': ' + str(temp) + '\n')
                 for value, min_v, max_v in notes:
                     if min_v < temp <= max_v:

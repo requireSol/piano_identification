@@ -55,7 +55,6 @@ class Chord:
             abc_format += abc_format_single
         if self.sustain == 10:
             abc_format += ']-' + abc_format.replace('8', '2')
-            print(abc_format)
 
         abc_format += ']'
 

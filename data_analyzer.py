@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from key import Key
 
 
 def summing_up(temp, with_keys):
@@ -14,6 +15,8 @@ def summing_up(temp, with_keys):
                     'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
     # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
     allkeys = white_keys + black_keys_b + ['z']
+
+    allkeys = Key.keyboard
 
     typ = temp[0]  # nicht gedrückt, 1: links, 2: rechts
     zaehler = 1  # Die Anzahl aufeinanderfolgender gleichbleibender Typen (rechts, links oder nicht gedrückt
@@ -33,6 +36,7 @@ def summing_up(temp, with_keys):
     if with_keys == 0:
         anzahl.append((typ, zaehler))
     else:
+
         anzahl.append((allkeys[typ], zaehler))
 
     """for index, tie in enumerate(tones_with_ties[:]):
@@ -115,6 +119,8 @@ def analyze_for_ties(measure1, next_measure):
                     'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
     allkeys = white_keys + black_keys_b + ['z']
 
+    allkeys = Key.keyboard
+
     y = len(measure1) // 40
     if y == 0:
         y = 1
@@ -127,3 +133,59 @@ def analyze_for_ties(measure1, next_measure):
             measure_ties += [allkeys[z]]
 
     return measure_ties
+
+
+def get_key(data):
+    key = 'C'
+    key_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'Bb', 'Db', 'Eb', 'Gb', 'Ab']
+    # a,b,c,d,e,f,g,bb,des,es,ges,as
+    whole_steps = {0: 1, 1: 8, 2: 3, 3: 4, 4: 10, 5: 6, 6: 0, 7: 2, 8: 9, 9: 5, 10: 11, 11: 7}
+    half_steps = {0: 7, 1: 2, 2: 8, 3: 9, 4: 5, 5: 10, 6: 11, 7: 1, 8: 3, 9: 4, 10: 6, 11: 0}
+    tonecounts = [0] * 12
+
+    all_tones_references = []
+    for i in range(7):
+        references = []
+        x = i
+        while x < 52:
+            references.append(x)
+            x += 7
+        all_tones_references.append(references)
+    for i in range(52, 57):
+        references = []
+        x = i
+        while x < 88:
+            references.append(x)
+            x += 5
+        all_tones_references.append(references)
+
+    for measure in data:
+        for ind, tone_references in enumerate(all_tones_references):
+            for reference in tone_references:
+                tonecounts[ind] += np.sum(measure[:, reference])
+
+    positive_counts = [tonecounts[i] for i in range(12) if tonecounts[i] > 0]
+    for k in range(12):
+        if tonecounts[k] > 0:
+            temp = k
+            i = 0
+            while i < 7:
+                if i == 2 or i == 6: # Halbtonschritt
+                    if tonecounts[half_steps[temp]] in positive_counts:
+                        temp = half_steps[temp]
+                    else:
+                        break
+                else:
+                    if tonecounts[whole_steps[temp]] in positive_counts: # Ganztonschritt
+                        temp = whole_steps[temp]
+                    else:
+                        break
+                i += 1
+            if i == 7:
+                key = key_names[k]
+                break
+    return key
+
+
+
+

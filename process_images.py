@@ -4,19 +4,23 @@ import data_analyzer as d_a
 import calculate_measure as c_m
 import score
 import part
+import key
 
 
 def create_score_object(path):
     count = len(os.listdir(path))
     measure_arrays = i_a.get_data_from_images(count, path)
+    key1 = (d_a.get_key(measure_arrays))
+    key.Key(key1)
 
-    score_object = score.Score()
+    score_object = score.Score(key1)
     bass_part_object = part.Part('bass')
     treble_part_object = part.Part('treble')
 
     previous_measures = [None, None]  # 0: Left, 1: Right
 
     for index, measure in enumerate(measure_arrays):
+        #print(measure[:,0])
         if index == len(measure_arrays) - 1:
             tied_notes = []
         else:
