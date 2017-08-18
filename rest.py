@@ -27,8 +27,10 @@ class Rest:
 
     def convert_to_abc(self):
         """Gibt das Rest-Object als ABC-Notation zurück"""
-
-        abc_format = self.abc_rest_visibility[self.visibility]
-        abc_format += str(self.sustain)
+        if self.sustain == 10 and self.visibility:
+            abc_format = 'z8z2'
+        else:
+            abc_format = self.abc_rest_visibility[self.visibility]
+            abc_format += str(self.sustain)
 
         return abc_format

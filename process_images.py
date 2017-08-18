@@ -1,5 +1,6 @@
 import os
 import image_analyzer as i_a
+import file_analyzer as f_a
 import data_analyzer as d_a
 import calculate_measure as c_m
 import score
@@ -10,7 +11,10 @@ import key
 def create_score_object(path):
     count = len(os.listdir(path))
 
-    measure_arrays = i_a.get_data_from_images(count, path)
+    i_a.convert_images_to_textfile(count, path)
+
+    measure_arrays = f_a.get_data_from_file()
+    #measure_arrays = i_a.get_data_from_images(count, path) # Import image_analyzer2 then
 
     d_a.search_for_incorrect_measures(measure_arrays)
 
