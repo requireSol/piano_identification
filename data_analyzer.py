@@ -1,20 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from report import Report
 from key import Key
 
 
 def summing_up(temp, with_keys):
-    # Bezeichnungen der Tasten in ABC-Notation mit Bs
-    white_keys = ['A0', 'B0', 'C1', 'D1', 'E1', 'F1', 'G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2',
-                  'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
-                  'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'F6', 'G6', 'A6', 'B6', 'C7', 'D7', 'E7',
-                  'F7', 'G7', 'A7', 'B7', 'C8']
-    # WICHTIG: Tonart tastaturzusammenstellung mit neuer funktion
-    black_keys_b = ['B-0', 'D-1', 'E-1', 'G-1', 'A-1', 'B-1', 'D-2', 'E-2', 'G-2', 'A-2', 'B-2',
-                    'D-3', 'E-3', 'G-3', 'A-3', 'B-3', 'D-4', 'E-4', 'G-4', 'A-4', 'B-4', 'D-5', 'E-5', 'G-5', 'A-5',
-                    'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
-    # Tastaturaufbau = alle weiße Tasteb+ alle schwarze Tasten
-    allkeys = white_keys + black_keys_b + ['z']
 
     allkeys = Key.keyboard
 
@@ -38,9 +28,6 @@ def summing_up(temp, with_keys):
     else:
 
         anzahl.append((allkeys[typ], zaehler))
-
-    """for index, tie in enumerate(tones_with_ties[:]):
-        tones_with_ties[index] = allkeys[tie]"""
 
     return anzahl
 
@@ -109,16 +96,6 @@ def analyze_pressed_keys(data):  # Bezieht sich auf einen Takt
 
 def analyze_for_ties(measure1, next_measure):
 
-    white_keys = ['A0', 'B0', 'C1', 'D1', 'E1', 'F1', 'G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2',
-                  'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
-                  'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'F6', 'G6', 'A6', 'B6', 'C7', 'D7', 'E7',
-                  'F7', 'G7', 'A7', 'B7', 'C8']
-
-    black_keys_b = ['B-0', 'D-1', 'E-1', 'G-1', 'A-1', 'B-1', 'D-2', 'E-2', 'G-2', 'A-2', 'B-2',
-                    'D-3', 'E-3', 'G-3', 'A-3', 'B-3', 'D-4', 'E-4', 'G-4', 'A-4', 'B-4', 'D-5', 'E-5', 'G-5', 'A-5',
-                    'B-5', 'D-6', 'E-6', 'G-6', 'A-6', 'B-6', 'D-7', 'E-7', 'G-7', 'A-7', 'B-7']
-    allkeys = white_keys + black_keys_b + ['z']
-
     allkeys = Key.keyboard
 
     y = len(measure1) // 40
@@ -136,7 +113,6 @@ def analyze_for_ties(measure1, next_measure):
 
 
 def get_key(data):
-    key = 'C'
     key_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'Bb', 'Db', 'Eb', 'Gb', 'Ab']
     # a,b,c,d,e,f,g,bb,des,es,ges,as
     whole_steps = {0: 1, 1: 8, 2: 3, 3: 4, 4: 10, 5: 6, 6: 0, 7: 2, 8: 9, 9: 5, 10: 11, 11: 7}
@@ -165,30 +141,38 @@ def get_key(data):
                 tonecounts[ind] += np.sum(measure[:, reference])
 
     positive_counts = [tonecounts[i] for i in range(12) if tonecounts[i] > 0]
+    possible_key = ['C', 0]
+
     for k in range(12):
+        probability = 0
         if tonecounts[k] > 0:
             temp = k
+            probability += tonecounts[k]
             i = 0
             while i < 7:
-                if i == 2 or i == 6: # Halbtonschritt
+                if i == 2 or i == 6:  # Halbtonschritt
                     if tonecounts[half_steps[temp]] in positive_counts:
                         temp = half_steps[temp]
+                        probability += tonecounts[temp]
                     else:
                         break
                 else:
-                    if tonecounts[whole_steps[temp]] in positive_counts: # Ganztonschritt
+                    if tonecounts[whole_steps[temp]] in positive_counts:  # Ganztonschritt
                         temp = whole_steps[temp]
+                        probability += tonecounts[temp]
                     else:
                         break
                 i += 1
             if i == 7:
-                key = key_names[k]
-                break
-    return key
+                if possible_key[1] < probability:
+                    possible_key[1] = probability
+                    possible_key[0] = key_names[k]
+    print(possible_key)
+    return possible_key[0]
 
 
 def search_for_incorrect_measures(data):
-    print(data[0])
+
     frame_counts = []
     for measure in data:
         frame_counts.append(len(measure))
@@ -197,8 +181,8 @@ def search_for_incorrect_measures(data):
 
     for ind, frame_count in enumerate(frame_counts):
         if frame_count > (avg + avg // 4):
-            print('Taktende nicht erkannt / übersehen')
+            Report.notifications += 'Takt ' + str(ind + 1) + ': Taktende nicht erkannt\n'
+            print(str(ind + 1) + ': Taktende nicht erkannt')
         if frame_count < (avg - avg // 4):
-            print('Rhythmus wird wahrscheinlich nicht richtig erkannt')
-
-
+            Report.notifications += 'Takt ' + str(ind + 1) + ': Takt wird wahrscheinlich nicht richtig erkannt\n'
+            print('Takt ' + str(ind + 1) + ': Takt wird wahrscheinlich nicht richtig erkannt')

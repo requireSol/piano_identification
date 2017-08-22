@@ -88,11 +88,14 @@ class Voice:
 
         all_is_rest = self.get_types()
 
+        #print(all_sustains)
+
         if self.check_for_valid_length():
             new_all_sustains = correct_rhythm.improve_valid_rhythm(all_sustains, all_is_rest)
         else:
             new_all_sustains = correct_rhythm.correct_invalid_rhythm(all_sustains, all_is_rest)
 
+        #print(new_all_sustains)
         self.change_sustains(new_all_sustains)
 
     def update_offsets(self):

@@ -14,7 +14,6 @@ def create_score_object(path):
     i_a.convert_images_to_textfile(count, path)
 
     measure_arrays = f_a.get_data_from_file()
-    #measure_arrays = i_a.get_data_from_images(count, path) # Import image_analyzer2 then
 
     d_a.search_for_incorrect_measures(measure_arrays)
 
@@ -22,7 +21,7 @@ def create_score_object(path):
 
     key.Key(key1)
 
-    score_object = score.Score(key1)
+    score_object = score.Score(key1, 'Rihanna', 'Stay')
     bass_part_object = part.Part('bass')
     treble_part_object = part.Part('treble')
 

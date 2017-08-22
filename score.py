@@ -1,4 +1,7 @@
 import helper
+import note
+import chord
+import rest
 
 
 class Score:
@@ -35,3 +38,28 @@ class Score:
         header += score_instruction + '\n'
 
         return header + body
+
+    def get_stats(self):
+        measure_count = 0
+        count_general = 0
+        rests_count = 0
+        chords_count = 0
+        notes_count = 0
+        sustain_stats_general = {1: 0, 2: 0, 3: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 14: 0, 16: 0}
+
+        for part in self.parts:
+            for measure in part.measures:
+                measure_count += 1
+                for voice in measure.voices:
+                    for note_chord_rest_object in voice.notes_chords_rests:
+                        count_general += 1
+                        if isinstance(note_chord_rest_object, note.Note):
+                            notes_count += 1
+                            sustain_stats_general[note_chord_rest_object.sustain] += 1
+                        elif isinstance(note_chord_rest_object, rest.Rest):
+                            rests_count += 1
+                        elif isinstance(note_chord_rest_object, chord.Chord):
+                            chords_count += 1
+                            sustain_stats_general[note_chord_rest_object.sustain] += 1
+
+        return measure_count // len(self.parts), notes_count, chords_count, rests_count, count_general, sustain_stats_general

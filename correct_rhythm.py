@@ -37,6 +37,7 @@ def without_pauses(diff_value, new_rhythm, tones):
             return new_rhythm
 
     elif diff_value < 0:
+
         if len(value_1_notes) % 2 == 1:
             new_rhythm[value_1_notes[0]] = 2
             diff_value -= 1
@@ -51,9 +52,11 @@ def without_pauses(diff_value, new_rhythm, tones):
             return new_rhythm
 
         if diff_value < 0:
-            max_value = max(new_rhythm)
-            index_of_max = new_rhythm.index(max_value)
-            new_rhythm[index_of_max] += diff_value
+            while diff_value < 0:
+                max_value = max(new_rhythm)
+                index_of_max = new_rhythm.index(max_value)
+                new_rhythm[index_of_max] -= 2
+                diff_value += 2
             return new_rhythm
 
 

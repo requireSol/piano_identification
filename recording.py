@@ -32,7 +32,7 @@ def record(time_amount, path):
         with mss.mss() as sct:
             mon = {'top': 905, 'left': 0, 'width': 1020, 'height': 25}
             # Save the picture
-            output = path + '\sct-' + str(i) + '.png'.format(**mon)
+            output = path + 'sct-' + str(i) + '.png'.format(**mon)
             sct_img = sct.grab(mon)
             mss.tools.to_png(sct_img.rgb, sct_img.size, output)
 
