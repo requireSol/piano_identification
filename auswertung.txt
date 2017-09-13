@@ -1,0 +1,34 @@
+Auswertung - "Stay" von "Rihanna"
+Infos:
+Zeitstempel: Aug 26 2017 18:36:35
+gebrauchte Zeit: 15.631s
+**********************************
+Hinweise: 
+Takt 2: Taktende nicht erkannt
+Takt 29: Taktende nicht erkannt
+Takt 42: Taktende nicht erkannt
+Takt 67: Taktende nicht erkannt
+**********************************
+Statistiken:
+Allgemein
+Takte:   101x
+***********************************
+Noten:   571x
+Akkorde: 211x
+Pausen:  783x
+Gesamt:  1565x
+***********************************
+Tonlaengen
+1/16: 2x
+1/8:  209x
+3/16: 2x
+1/4:  409x
+3/8:  26x
+1/2:  20x
+5/8:  1x
+3/4:  11x
+7/8:  1x
+1/1:  101x
+***********************************
+
+        
