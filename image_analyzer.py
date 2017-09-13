@@ -3,9 +3,9 @@ import numpy as np
 
 
 def convert_images_to_textfile(image_count, path):
-    white_keys_x = [int(round(10 + 19.32 * x)) for x in range(52)] #Referenzpixel für die weißen Tasten
+    white_keys_x = [int(round(10 + 19.32 * x)) for x in range(52)]  # Referenzpixel für die weißen Tasten
 
-    black_keys_x = [20] #Referenzpixel für die schwarzen Tasten
+    black_keys_x = [20]  # Referenzpixel für die schwarzen Tasten
     z = 20
     for i in range(7):
         for j in [40, 20, 35, 20, 20]:
@@ -28,15 +28,15 @@ def convert_images_to_textfile(image_count, path):
             temp = image_asarray[y, x]
 
             if (25 <= temp[0] <= 100) and (120 <= temp[1] <= 240) and (100 <= temp[2] <= 180):
-                data.append(1) #Taste in der linken Hand
+                data.append(1)  # Taste in der linken Hand
             elif (50 <= temp[0] <= 130) and (120 <= temp[1] <= 200) and (170 <= temp[2] <= 255):
-                data.append(2) #Taste in der rechten Hand
+                data.append(2)  # Taste in der rechten Hand
             else:
-                data.append(0) #Taste nicht gedrückt
+                data.append(0)  # Taste nicht gedrückt
 
             f.write(str(data[-1]))
         # check for end of measure
-        if np.sum(image_asarray[0:8, 30]) > 20: #Wenn an dieser Stelle graue Pixel snstatt schwarzen Pixel sind, kann es sich um ein Taktende handeln
+        if np.sum(image_asarray[0:8, 30]) > 20:  # Wenn an dieser Stelle graue Pixel snstatt schwarzen Pixel sind, kann es sich um ein Taktende handeln
             f.write('4')
         else:
             f.write('3')
