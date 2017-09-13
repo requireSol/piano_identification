@@ -51,5 +51,3 @@ Tonlaengen
         file = open(path, 'w')
         file.write(report_str)
         file.close()
-
-

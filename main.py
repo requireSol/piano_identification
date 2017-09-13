@@ -24,5 +24,3 @@ elif c == '2':
     end_time = str(round((time.time() - start_time), 3))
     report_object = report.Report(score_object, end_time)
     report_object.create()
-
-

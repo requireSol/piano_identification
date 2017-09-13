@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# TODO Improve whole process
 
 
 def without_pauses(diff_value, new_rhythm, tones):
