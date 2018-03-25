@@ -7,7 +7,7 @@ import time
 import os
 import mss
 import mss.tools
-
+# ALLE WERTE SIND FÜR ONLINEPIANISTS.COM EINGESTELLT UND AUF DIE WERTE IN image_analyzer.py ABGESTIMMT!
 
 def prepare(path):
     # path = 'sct\\'
@@ -30,7 +30,7 @@ def record(time_amount, path):
 
     while time.time() < t_end:
         with mss.mss() as sct:
-            mon = {'top': 905, 'left': 0, 'width': 1020, 'height': 25}
+            mon = {'top': 905, 'left': 0, 'width': 1020, 'height': 25}  # Individual values !
             # Save the picture
             output = path + 'sct-' + str(i) + '.png'.format(**mon)
             sct_img = sct.grab(mon)
@@ -40,5 +40,5 @@ def record(time_amount, path):
 
     print('RECORDING HAS FINISHED')
 
-    print(i // time_amount)
-    print(i)
+    print('AVERAGE FPS: ' + str(i // time_amount))
+    print('COUNT OF IMAGES: ' + str(i))

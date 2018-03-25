@@ -5,16 +5,20 @@ import report
 import time
 
 path = 'sct2\\'
-c = input('Mode: [1] = recording | [2] = creating abc-notation\n')
+c = input('Mode: [1] = recording | [2] = creating abc-notation from recorded images | [3] creating abc_notation from datafile\n')
 if c == '1':
-    print('START')
-    rec.prepare(path)
-    rec.record(266, path)    # time in seconds
+    length = input('Length in seconds: ')
+    if length.isnumeric():
+        rec.prepare(path)
+        rec.record(length, path)    # time in seconds
+    else:
+        print('expected int')
 
-elif c == '2':
+elif c == '2' or c == '3':
     start_time = time.time()
+    # In Process_Images auswählen, ob man Bilder einlesen möchte oder nicht.
 
-    score_object = p_i.create_score_object(path)
+    score_object = p_i.create_score_object(path, use_images=c == '2')
 
     outputstr = score_object.convert_to_abc()
     f = open('abc_file.txt', 'w')

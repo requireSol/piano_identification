@@ -8,10 +8,10 @@ import part
 import key
 
 
-def create_score_object(path):
+def create_score_object(path, use_images=False):
     count = len(os.listdir(path))
-
-    i_a.convert_images_to_textfile(count, path)
+    if use_images:
+        i_a.convert_images_to_textfile(count, path)
 
     measure_arrays = f_a.get_data_from_file()
 
@@ -28,7 +28,7 @@ def create_score_object(path):
     previous_measures = [None, None]  # 0: Left, 1: Right
 
     for index, measure in enumerate(measure_arrays):
-        print(str(index) + ': ' + str(len(measure)))
+        #print(str(index) + ': ' + str(len(measure)))
         if index == len(measure_arrays) - 1:
             tied_notes = []
         else:
