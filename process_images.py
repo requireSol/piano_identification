@@ -8,7 +8,7 @@ import part
 import key
 
 
-def create_score_object(path, use_images=False):
+def create_score_object(path, use_images=False, composer='noname', title='unknown'):
     count = len(os.listdir(path))
     if use_images:
         i_a.convert_images_to_textfile(count, path)
@@ -21,7 +21,7 @@ def create_score_object(path, use_images=False):
 
     key.Key(key1)
 
-    score_object = score.Score(key1, 'Rihanna', 'Stay')
+    score_object = score.Score(key1, composer, title)
     bass_part_object = part.Part('bass')
     treble_part_object = part.Part('treble')
 

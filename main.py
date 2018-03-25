@@ -15,10 +15,13 @@ if c == '1':
         print('expected int')
 
 elif c == '2' or c == '3':
+    title = input("Enter the title: ")
+    composer = input("Enter the composer: ")
+
     start_time = time.time()
     # In Process_Images auswählen, ob man Bilder einlesen möchte oder nicht.
 
-    score_object = p_i.create_score_object(path, use_images=c == '2')
+    score_object = p_i.create_score_object(path, use_images=c == '2', title=title, composer=composer)
 
     outputstr = score_object.convert_to_abc()
     f = open('abc_file.txt', 'w')

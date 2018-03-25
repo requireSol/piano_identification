@@ -1,7 +1,7 @@
 Auswertung - "Stay" von "Rihanna"
 Infos:
-Zeitstempel: Aug 26 2017 18:36:35
-gebrauchte Zeit: 15.631s
+Zeitstempel: Dec 08 2017 20:06:54
+gebrauchte Zeit: 1.8s
 **********************************
 Hinweise: 
 Takt 2: Taktende nicht erkannt
